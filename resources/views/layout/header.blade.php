@@ -4,7 +4,7 @@
             <a class="text-muted" href="#">Subscribe</a>
         </div>
         <div class="col-4 text-center">
-            <a class="blog-header-logo text-dark" href="#">Large</a>
+            <a class="blog-header-logo text-dark" href="{{ route('mainPage') }}">Laravel Blog</a>
         </div>
         <div class="col-4 d-flex justify-content-end align-items-center">
             <a class="text-muted" href="#" aria-label="Search">
@@ -20,7 +20,7 @@
     </div>
 </header>
 
-<div class="nav-scroller py-1 mb-2">
+<div class="nav-scroller py-1 mb-5">
     <nav class="nav d-flex justify-content-between">
         <a class="p-2 text-muted" href="{{ route('mainPage') }}">Главная</a>
         <a class="p-2 text-muted" href="{{ route('about') }}">О нас</a>

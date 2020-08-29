@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Post;
+use Illuminate\Support\Str;
 
 /**
  * Придерживаемся общепринятого наименования методов контроллера
@@ -52,10 +53,47 @@ class PostsController extends Controller
      */
     public function store()
     {
+//        dd(request()->all());
+
         $request = $this->validate(
             request(),
             [
-                'slug' => 'bail|required|regex:/^[a-zA-Z0-9_-]+$/|unique:posts',
+                'title' => 'bail|required|min:5|max:100',
+                'short_desc' => 'required|max:255',
+                'text' => 'required',
+            ]
+        );
+
+        $request['slug'] = $this->generateSlug($request['title']);
+
+        $request['published'] = request()->input('published') ?? false;
+
+        Post::create($request);
+
+        return redirect('/');
+    }
+
+    /**
+     * Изменение поста
+     * @param Post $post
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function edit(Post $post)
+    {
+        return view('posts.edit', compact('post'));
+    }
+
+    /**
+     * Обновление изменений
+     * @param Post $post
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function update(Post $post)
+    {
+        $request = $this->validate(
+            request(),
+            [
                 'title' => 'bail|required|min:5|max:100',
                 'short_desc' => 'required|max:255',
                 'text' => 'required',
@@ -64,8 +102,46 @@ class PostsController extends Controller
 
         $request['published'] = request()->input('published') ?? false;
 
-        Post::create($request);
+        $post->update($request);
 
-        return redirect('/');
+        return redirect(route('postShow', $post->slug));
+    }
+
+    /**
+     * Удаление поста
+     *
+     * @param Post $post
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @throws \Exception
+     */
+    public function destroy(Post $post)
+    {
+        $post->delete();
+
+        return redirect(route('mainPage'));
+    }
+
+    /**
+     * Генерирует url,
+     * проверяет его на уникальность и дописывает номера,
+     * пока url не станет уникальным
+     *
+     * @param string $str
+     * @return string
+     */
+    private function generateSlug(string $str): string
+    {
+        $slug = Str::slug($str);
+
+        if (Post::all()->where('slug', $slug)->first()) {
+            $i = 2;
+            while (Post::all()->where('slug', $slug . $i)->first()) {
+                $i++;
+            }
+
+            $slug .= $i;
+        }
+
+        return $slug;
     }
 }

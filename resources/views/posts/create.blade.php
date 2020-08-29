@@ -27,16 +27,6 @@
                         @endif
                     </div>
                     <div class="form-group">
-                        <label for="slug">Адрес</label>
-                        <input type="text" class="form-control" id="title" value="{{ old('slug') }}"
-                               name="slug" placeholder="Введите адрес">
-                        @if($errors->first('slug'))
-                            <div class="alert alert-danger mt-4">
-                                <p>{{ $errors->first('slug') }}</p>
-                            </div>
-                        @endif
-                    </div>
-                    <div class="form-group">
                         <label for="short_desc">Короткое описание</label>
                         <textarea class="form-control" id="short_desc" name="short_desc"
                                   rows="3">{{ old('short_desc') }}</textarea>
@@ -47,8 +37,8 @@
                         @endif
                     </div>
                     <div class="form-group">
-                        <label for="text">Текст поста</label>
-                        <textarea class="form-control" id="text" name="text" rows="3">{{ old('text') }}</textarea>
+                        <label for="htmlInput">Текст поста</label>
+                        <textarea class="form-control" id="htmlInput" name="text" rows="3">{{ old('text') }}</textarea>
                         @if($errors->first('text'))
                             <div class="alert alert-danger mt-4">
                                 <p>{{ $errors->first('text') }}</p>

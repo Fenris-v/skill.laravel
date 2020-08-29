@@ -4,8 +4,6 @@
 
 @section('content')
 
-    @include('main.top')
-
     <main role="main" class="container">
         <div class="row">
 

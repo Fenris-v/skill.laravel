@@ -5,3 +5,6 @@
         <a href="#">Back to top</a>
     </p>
 </footer>
+
+<script src="/assets/tinymce/tinymce.min.js"></script>
+<script src="/js/scripts.js"></script>
