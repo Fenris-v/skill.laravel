@@ -45,11 +45,13 @@
                             </div>
                         @endif
                     </div>
-                    <div class="form-group form-check">
-                        <input {{ old('published') === 'on' ? 'checked' : '' }}
-                            type="checkbox" class="form-check-input" id="published" name="published">
-                        <label class="form-check-label" for="published">Опубликовано</label>
-                    </div>
+                    @if(\App\User::isAdmin())
+                        <div class="form-group form-check">
+                            <input {{ old('published') === 'on' ? 'checked' : '' }}
+                                   type="checkbox" class="form-check-input" id="published" name="published">
+                            <label class="form-check-label" for="published">Опубликовать</label>
+                        </div>
+                    @endif
                     <button type="submit" class="btn btn-primary">Отправить</button>
                 </form>
             </div>

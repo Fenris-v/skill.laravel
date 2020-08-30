@@ -12,13 +12,14 @@
 
     <!-- Custom styles for this template -->
     <link href="https://fonts.googleapis.com/css?family=Playfair+Display:700,900" rel="stylesheet">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
 
     <!-- Custom styles for this template -->
     <link href="/css/app.css" rel="stylesheet">
 </head>
 
 <body>
-<div class="container">
+<div class="container d-flex flex-column min-vh-100">
     @include('layout.header')
 
     @yield('content')

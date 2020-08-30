@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Post;
-use Illuminate\Support\Str;
+use App\User;
 
 /**
  * Придерживаемся общепринятого наименования методов контроллера
@@ -12,6 +12,11 @@ use Illuminate\Support\Str;
  */
 class PostsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth')->except(['index', 'show']);
+    }
+
     /**
      * Возвращает отображение главной страницы
      * Передает в нее выборку статей
@@ -32,6 +37,11 @@ class PostsController extends Controller
      */
     public function show(Post $post)
     {
+        // TODO: сначала хотел сделать через PostPolicy,
+        // TODO: но пользователь ведь может быть не авторизован.
+        // TODO: Policy, на сколько я понял, относятся только к авторизованным пользователям?
+        abort_unless(User::isAdmin() || $post->published, 403);
+
         return view('posts.show', compact('post'));
     }
 
@@ -48,13 +58,12 @@ class PostsController extends Controller
      * Метод, который валидирует и добавляет статьи в БД.
      * В случае успеха - выполняет редирект на главную.
      * В случае ошибки - возвращает на страницу создания статьи.
+     * @param Post $post
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store()
+    public function store(Post $post)
     {
-//        dd(request()->all());
-
         $request = $this->validate(
             request(),
             [
@@ -64,9 +73,11 @@ class PostsController extends Controller
             ]
         );
 
-        $request['slug'] = $this->generateSlug($request['title']);
+        $request['slug'] = $post->generateSlug($request['title']);
 
         $request['published'] = request()->input('published') ?? false;
+
+        $request['user_id'] = auth()->id();
 
         Post::create($request);
 
@@ -77,9 +88,12 @@ class PostsController extends Controller
      * Изменение поста
      * @param Post $post
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function edit(Post $post)
     {
+        $this->authorize('update', $post);
+
         return view('posts.edit', compact('post'));
     }
 
@@ -109,7 +123,6 @@ class PostsController extends Controller
 
     /**
      * Удаление поста
-     *
      * @param Post $post
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      * @throws \Exception
@@ -122,26 +135,29 @@ class PostsController extends Controller
     }
 
     /**
-     * Генерирует url,
-     * проверяет его на уникальность и дописывает номера,
-     * пока url не станет уникальным
-     *
-     * @param string $str
-     * @return string
+     * Все неопубликованные посты
+     * @param Post $post
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    private function generateSlug(string $str): string
+    public function showUnpublished(Post $post)
     {
-        $slug = Str::slug($str);
+        $this->authorize('viewAny', $post);
 
-        if (Post::all()->where('slug', $slug)->first()) {
-            $i = 2;
-            while (Post::all()->where('slug', $slug . $i)->first()) {
-                $i++;
-            }
+        $posts = Post::unpublished()->latest()->get();
 
-            $slug .= $i;
-        }
+        return view('main.index', compact('posts'));
+    }
 
-        return $slug;
+    /**
+     * Быстрая публикация
+     * @param Post $post
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function publishing(Post $post)
+    {
+        $post->update(['published' => true]);
+
+        return redirect(route('postShow', $post->slug));
     }
 }

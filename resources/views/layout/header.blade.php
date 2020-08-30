@@ -15,7 +15,30 @@
                     <path d="M21 21l-5.2-5.2"/>
                 </svg>
             </a>
-            <a class="btn btn-sm btn-outline-secondary" href="#">Sign up</a>
+
+            @guest
+                <a class="btn btn-sm btn-outline-primary mr-2" href="{{ route('login') }}">{{ __('auth.login') }}</a>
+                @if (Route::has('register'))
+                    <a class="btn btn-sm btn-outline-secondary"
+                       href="{{ route('register') }}">{{ __('auth.register') }}</a>
+                @endif
+            @else
+                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
+                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                    {{ Auth::user()->name }}
+                </a>
+
+                <div class="dropdown-menu dropdown-menu-right py-0" aria-labelledby="navbarDropdown">
+                    <a id="dropdownLogout" class="dropdown-item py-2" href="{{ route('logout') }}">
+                        {{ __('auth.logout') }}
+                    </a>
+
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                        @csrf
+                    </form>
+                </div>
+            @endguest
+
         </div>
     </div>
 </header>
@@ -26,6 +49,9 @@
         <a class="p-2 text-muted" href="{{ route('about') }}">О нас</a>
         <a class="p-2 text-muted" href="{{ route('contacts') }}">Контакты</a>
         <a class="p-2 text-muted" href="{{ route('postsCreate') }}">Создать статью</a>
-        <a class="p-2 text-muted" href="{{ route('callbacksList') }}">Админ</a>
+        @if(\App\User::isAdmin())
+            <a class="p-2 text-muted" href="{{ route('unpublishedPosts') }}">Неопубликованные статьи</a>
+            <a class="p-2 text-muted" href="{{ route('callbacksList') }}">Админ</a>
+        @endif
     </nav>
 </div>
