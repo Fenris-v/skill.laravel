@@ -45,6 +45,9 @@
                             </div>
                         @endif
                     </div>
+                    <div class="form-group">
+                        @include('posts.editTags')
+                    </div>
                     @if(\App\User::isAdmin())
                         <div class="form-group form-check">
                             <input {{ old('published') === 'on' ? 'checked' : '' }}

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Post;
+use App\Tag;
 use App\User;
+use Illuminate\Support\Collection;
 
 /**
  * Придерживаемся общепринятого наименования методов контроллера
@@ -24,7 +26,8 @@ class PostsController extends Controller
      */
     public function index()
     {
-        $posts = Post::published()->latest()->get();
+        // TODO: я правильно понял, что достаточно в этом методе указать связь with() ?
+        $posts = Post::publishedPosts()->with('tags')->with('user')->latest()->get();
 
         return view('main.index', compact('posts'));
     }
@@ -79,7 +82,24 @@ class PostsController extends Controller
 
         $request['user_id'] = auth()->id();
 
-        Post::create($request);
+        $post = Post::create($request);
+
+        $tags = collect(request('tags'))->keyBy(
+            function ($item) {
+                return $item;
+            }
+        );
+
+        // TODO: Тот же вопрос, что и в методе update()
+        foreach ($tags as $tag) {
+            if (Tag::where('name', $tag)->first()) {
+                $tag = Tag::where('name', $tag)->first();
+            } else {
+                $tag = Tag::create(['name' => $tag, 'slug' => (new Tag)->generateSlug($tag)]);
+            }
+
+            $post->tags()->attach($tag);
+        }
 
         return redirect('/');
     }
@@ -118,7 +138,35 @@ class PostsController extends Controller
 
         $post->update($request);
 
-        return redirect(route('postShow', $post->slug));
+        /** @var Collection $postTags */
+        $postTags = collect($post->tags->keyBy('name'));
+
+        $tags = collect(request('tags'))->keyBy(
+            function ($item) {
+                return $item;
+            }
+        );
+
+        $syncIds = $postTags->intersectByKeys($tags)->pluck('id')->toArray();
+
+        $tagsToAttach = $tags->diffKeys($postTags);
+
+        // TODO: Я хочу здесь вызывать метод, который будет генерировать адрес для нового тега.
+        // TODO: (не хочется делать как в уроке с выводом имени тега в адресной строке)
+        // TODO: Но мне кажется, что этот код излишне сложен и его можно оптимизировать
+        foreach ($tagsToAttach as $tag) {
+            if (Tag::where('name', $tag)->first()) {
+                $tag = Tag::where('name', $tag)->first();
+            } else {
+                $tag = Tag::create(['name' => $tag, 'slug' => (new Tag)->generateSlug($tag)]);
+            }
+
+            $syncIds[] = $tag->id;
+        }
+
+        $post->tags()->sync($syncIds);
+
+        return redirect(route('postShow', $post->getRouteKey()));
     }
 
     /**
@@ -144,20 +192,8 @@ class PostsController extends Controller
     {
         $this->authorize('viewAny', $post);
 
-        $posts = Post::unpublished()->latest()->get();
+        $posts = Post::unpublishedPosts()->latest()->get();
 
         return view('main.index', compact('posts'));
-    }
-
-    /**
-     * Быстрая публикация
-     * @param Post $post
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     */
-    public function publishing(Post $post)
-    {
-        $post->update(['published' => true]);
-
-        return redirect(route('postShow', $post->slug));
     }
 }

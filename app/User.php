@@ -2,7 +2,6 @@
 
 namespace App;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -38,6 +37,15 @@ class User extends Authenticatable
     ];
 
     /**
+     * Устанавливаем в качестве дефолтного ключа name
+     * @return string
+     */
+    public function getRouteKeyName()
+    {
+        return 'name';
+    }
+
+    /**
      * Создаем связь "многие ко многим"
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
@@ -61,5 +69,14 @@ class User extends Authenticatable
         }
 
         return false;
+    }
+
+    /**
+     * Все посты пользователя
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
     }
 }

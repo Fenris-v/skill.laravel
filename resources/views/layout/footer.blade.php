@@ -17,6 +17,3 @@
         </div>
     </div>
 </footer>
-
-<script src="/assets/tinymce/tinymce.min.js"></script>
-<script src="/js/scripts.js"></script>

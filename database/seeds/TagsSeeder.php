@@ -2,6 +2,7 @@
 
 use App\Tag;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class TagsSeeder extends Seeder
 {
@@ -13,8 +14,8 @@ class TagsSeeder extends Seeder
     public function run()
     {
         $items = [
-            ['name' => 'История'],
-            ['name' => 'Литература']
+            ['name' => 'История', 'slug' => Str::slug('История')],
+            ['name' => 'Литература', 'slug' => Str::slug('Литература')]
         ];
 
         foreach ($items as $item) {

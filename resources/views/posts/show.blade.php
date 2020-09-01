@@ -14,18 +14,24 @@
                                href="{{ route('postEdit', ['post' => $post->getRouteKey()]) }}">Изменить</a>
                         @endcan
 
-                        @if(\App\User::isAdmin() && !$post->published)
-                            <a class="btn-outline-secondary btn" id="publishing" href="#">Опубликовать</a>
+                        @if(\App\User::isAdmin())
+                            <a class="btn {{ $post->published ? 'btn-outline-danger' : 'btn-outline-secondary' }}"
+                               id="publishing"
+                               href="#">{{ $post->published ? 'Снять с публикации' : 'Опубликовать' }}</a>
 
-                            <form id="publishing-form" action="{{ route('postPublishing', $post->slug) }}" method="POST"
+                            <form id="publishing-form" action="{{ route('postPublishing', $post->getRouteKey()) }}" method="POST"
                                   class="d-none">
                                 @csrf
 
-                                @method('PATCH')
+                                @if($post->published)
+                                    @method('DELETE')
+                                @endif
                             </form>
                         @endif
                     </h2>
                     <p class="blog-post-meta">{{ $post->created_at->isoFormat('D MMM YYYY') }}</p>
+
+                    @include('posts.tags', ['tags' => $post->tags])
 
                     {!! $post->text !!}
                     <a class="btn btn-primary" href="{{ route('mainPage') }}">Вернуться</a>

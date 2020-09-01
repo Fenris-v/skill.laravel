@@ -49,8 +49,8 @@
                         @endif
                     </div>
                     <div class="form-group">
-                        <label for="text">Текст поста</label>
-                        <textarea class="form-control" id="text"
+                        <label for="htmlInput">Текст поста</label>
+                        <textarea class="form-control" id="htmlInput"
                                   name="text" rows="3">{{ old('text') ?? $post->text }}</textarea>
                         @if($errors->first('text'))
                             <div class="alert alert-danger mt-4">
@@ -58,15 +58,18 @@
                             </div>
                         @endif
                     </div>
+                    <div class="form-group">
+                        @include('posts.editTags')
+                    </div>
                     <div class="form-group form-check">
                         <input {{ old('published') === 'on' ? 'checked' : '' }} {{ $post->published ? 'checked' : '' }}
-                               type="checkbox" class="form-check-input" id="published" name="published">
+                        type="checkbox" class="form-check-input" id="published" name="published">
                         <label class="form-check-label" for="published">Опубликовано</label>
                     </div>
                     <button type="submit" class="btn btn-primary">Изменить</button>
                 </form>
 
-                <form action="/posts/{{ $post->getRouteKey() }}" method="POST">
+                <form class="mb-2" action="/posts/{{ $post->getRouteKey() }}" method="POST">
 
                     @method('DELETE')
 

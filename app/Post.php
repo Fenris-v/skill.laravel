@@ -2,13 +2,15 @@
 
 namespace App;
 
+use App\Traits\GenerateSlug;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class Post extends Model
 {
+    use GenerateSlug;
+
     /** Разрешенные для массового заполнения поля */
-    protected $fillable = ['title', 'slug', 'short_desc', 'text', 'published'];
+    protected $fillable = ['title', 'slug', 'short_desc', 'text', 'published', 'user_id'];
 
     /**
      * Переопределяем по какому значению будет поиск по БД для маршрута
@@ -25,7 +27,7 @@ class Post extends Model
      * @param $query
      * @return mixed
      */
-    public function scopePublished($query)
+    public function scopePublishedPosts($query)
     {
         return $query->where('published', 1);
     }
@@ -35,32 +37,42 @@ class Post extends Model
      * @param $query
      * @return mixed
      */
-    public function scopeUnpublished($query)
+    public function scopeUnpublishedPosts($query)
     {
         return $query->where('published', 0);
     }
 
     /**
-     * Генерирует url,
-     * проверяет его на уникальность и дописывает номера,
-     * пока url не станет уникальным
-     *
-     * @param string $str
-     * @return string
+     * Автор статьи
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function generateSlug(string $str): string
+    public function user()
     {
-        $slug = Str::slug($str);
+        return $this->belongsTo(User::class);
+    }
 
-        if ($this::all()->where('slug', $slug)->first()) {
-            $i = 2;
-            while ($this::all()->where('slug', $slug . $i)->first()) {
-                $i++;
-            }
+    /**
+     * Публикация поста
+     * @param bool $publishing
+     */
+    public function publishing($publishing = true)
+    {
+        $this->update(['published'=> $publishing]);
+    }
 
-            $slug .= $i;
-        }
+    /**
+     * Снятие поста с публикации
+     */
+    public function unpublishing()
+    {
+        $this->publishing(false);
+    }
 
-        return $slug;
+    /**
+     * Теги поста
+     */
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class);
     }
 }

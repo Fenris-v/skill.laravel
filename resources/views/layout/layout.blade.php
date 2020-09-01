@@ -10,6 +10,8 @@
     <!-- Bootstrap core CSS -->
     <link href="/css/bootstrap.min.css" rel="stylesheet">
 
+    <link href="/css/select2.min.css" rel="stylesheet">
+
     <!-- Custom styles for this template -->
     <link href="https://fonts.googleapis.com/css?family=Playfair+Display:700,900" rel="stylesheet">
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
@@ -26,5 +28,8 @@
 
     @include('layout.footer')
 </div>
-</body>
-</html>
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+<script src="/assets/tinymce/tinymce.min.js"></script>
+<script src="/js/select2.full.min.js"></script>
+<script src="/js/scripts.js"></script>

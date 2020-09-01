@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
      * Подключение tinymce
      * @type {Element}
      */
-    // let htmlInput = document.querySelector('#htmlInput');
     tinymce.init({
         selector: 'textarea#htmlInput',
         height: 300,
@@ -58,4 +57,11 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('publishing-form').submit();
         });
     }
+
+    /**
+     * Подключаем select2
+     */
+    $('#tagsInput').select2({
+        tags: true
+    });
 });
