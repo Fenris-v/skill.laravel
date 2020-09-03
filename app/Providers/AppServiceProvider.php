@@ -29,9 +29,8 @@ class AppServiceProvider extends ServiceProvider
             $view->with('tagsCloud', Tag::tagsCloud());
         });
 
-        view()->composer('posts.editTags', function (View $view) {
+        view()->composer('posts.edit-tags', function (View $view) {
             $view->with('tags', Tag::all());
-//            $view->with()
         });
     }
 }

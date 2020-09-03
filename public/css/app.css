@@ -100,4 +100,9 @@ h1, h2, h3, h4, h5, h6 {
 .blog-footer p:last-child {
   margin-bottom: 0; }
 
+#notification {
+  right: 0;
+  z-index: 1;
+  margin-right: 15px; }
+
 /*# sourceMappingURL=app.css.map */

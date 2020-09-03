@@ -2,12 +2,17 @@
 
 namespace App;
 
+use App\Events\PostCreated;
 use App\Traits\GenerateSlug;
 use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
     use GenerateSlug;
+
+    protected $dispatchesEvents = [
+        'created' => PostCreated::class
+    ];
 
     /** Разрешенные для массового заполнения поля */
     protected $fillable = ['title', 'slug', 'short_desc', 'text', 'published', 'user_id'];

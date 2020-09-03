@@ -64,4 +64,17 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#tagsInput').select2({
         tags: true
     });
+
+    /**
+     * Скрывает, а затем удаляет уведомление
+     */
+    let notification = document.querySelector('#notification');
+    if (notification) {
+        setTimeout(() => {
+            $(notification).fadeOut();
+            setTimeout(() => {
+                notification.remove();
+            }, 500);
+        }, 3000);
+    }
 });

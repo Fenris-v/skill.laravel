@@ -59,7 +59,7 @@
                         @endif
                     </div>
                     <div class="form-group">
-                        @include('posts.editTags')
+                        @include('posts.edit-tags')
                     </div>
                     <div class="form-group form-check">
                         <input {{ old('published') === 'on' ? 'checked' : '' }} {{ $post->published ? 'checked' : '' }}

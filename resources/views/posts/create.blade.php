@@ -46,7 +46,7 @@
                         @endif
                     </div>
                     <div class="form-group">
-                        @include('posts.editTags')
+                        @include('posts.edit-tags')
                     </div>
                     @if(\App\User::isAdmin())
                         <div class="form-group form-check">

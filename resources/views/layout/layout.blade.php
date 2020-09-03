@@ -21,7 +21,10 @@
 </head>
 
 <body>
-<div class="container d-flex flex-column min-vh-100">
+
+<div class="container d-flex flex-column min-vh-100 position-relative">
+    @include('posts.flash-message')
+
     @include('layout.header')
 
     @yield('content')

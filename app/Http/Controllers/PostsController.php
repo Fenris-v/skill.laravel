@@ -27,6 +27,8 @@ class PostsController extends Controller
     public function index()
     {
         // TODO: я правильно понял, что достаточно в этом методе указать связь with() ?
+        // TODO: как-то сомнительно, ведь этот метод вызывается только для определенной страницы,
+        // TODO: а теги нужно выводить везде, где есть статья/статьи
         $posts = Post::publishedPosts()->with('tags')->with('user')->latest()->get();
 
         return view('main.index', compact('posts'));
@@ -101,6 +103,9 @@ class PostsController extends Controller
             $post->tags()->attach($tag);
         }
 
+        /** Сохраняет в сессию на 1 переход */
+        flash('Пост успешно создан', 'success');
+
         return redirect('/');
     }
 
@@ -166,6 +171,8 @@ class PostsController extends Controller
 
         $post->tags()->sync($syncIds);
 
+        flash('Пост успешно изменен', 'success');
+
         return redirect(route('postShow', $post->getRouteKey()));
     }
 
@@ -178,6 +185,8 @@ class PostsController extends Controller
     public function destroy(Post $post)
     {
         $post->delete();
+
+        flash('Пост удален', 'danger');
 
         return redirect(route('mainPage'));
     }
