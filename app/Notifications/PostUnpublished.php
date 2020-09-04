@@ -7,7 +7,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class PostPublished extends Notification
+class PostUnpublished extends Notification
 {
     use Queueable;
 
@@ -42,6 +42,6 @@ class PostPublished extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new MailMessage)->replyTo($notifiable->email)->markdown('mail.post-published', ['post' => $this->post]);
+        return (new MailMessage)->replyTo($notifiable->email)->markdown('mail.post-unpublished', ['post' => $this->post]);
     }
 }

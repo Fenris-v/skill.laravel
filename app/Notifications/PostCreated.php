@@ -11,7 +11,7 @@ class PostCreated extends Notification
 {
     use Queueable;
 
-    public $post;
+    public Post $post;
 
     /**
      * Create a new notification instance.
@@ -42,10 +42,6 @@ class PostCreated extends Notification
      */
     public function toMail($notifiable)
     {
-        $toSend = [
-            config('mail.admin.mail'),
-            $this->post->user->email
-        ];
-        return (new MailMessage)->replyTo($toSend)->markdown('mail.post-created', ['post' => $this->post]);
+        return (new MailMessage)->replyTo($notifiable->email)->markdown('mail.post-created', ['post' => $this->post]);
     }
 }

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Notification;
 class SendPostCreatedNotification
 {
     /**
-     * Уведомляет админов и автора о создании нового поста
+     * Уведомляет админов и автора о изменении поста
      *
      * @param  PostCreated  $event
      * @return void

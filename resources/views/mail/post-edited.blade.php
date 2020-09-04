@@ -1,13 +1,11 @@
 @component('mail::message')
-# Создана новая статья: {{ $post->title }}
+# Статья изменена: {{ $post->title }}
 
 {{ $post->short_desc }}
 
 @component('mail::button', ['url' => route('postShow', $post->slug)])
 Посмотреть
 @endcomponent
-
-<span style="color: red;">*\*Ссылка будет доступна после публикации*</span>
 
 Спасибо,<br>
 {{ config('app.name') }}

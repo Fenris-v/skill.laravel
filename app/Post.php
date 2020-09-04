@@ -3,19 +3,51 @@
 namespace App;
 
 use App\Events\PostCreated;
+use App\Events\PostEdited;
+use App\Events\PostPublished;
+use App\Events\PostRemoved;
+use App\Events\PostUnpublished;
 use App\Traits\GenerateSlug;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+use function route;
 
 class Post extends Model
 {
     use GenerateSlug;
 
     protected $dispatchesEvents = [
-        'created' => PostCreated::class
+        'created' => PostCreated::class,
+        'deleted' => PostRemoved::class
     ];
 
     /** Разрешенные для массового заполнения поля */
     protected $fillable = ['title', 'slug', 'short_desc', 'text', 'published', 'user_id'];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        /** Собственная логика на событие 'updated' */
+        static::updated(
+            function ($post) {
+                if (
+                    url()->current() === route('postPublishing', $post->slug) &&
+                    strtoupper(request()->method()) === 'POST'
+                ) {
+                    event(new PostPublished($post));
+                } elseif (
+                    url()->current() === route('postPublishing', $post->slug) &&
+                    strtoupper(request()->method()) === 'DELETE'
+                ) {
+                    event(new PostUnpublished($post));
+                } else {
+                    event(new PostEdited($post));
+                }
+            }
+        );
+    }
 
     /**
      * Переопределяем по какому значению будет поиск по БД для маршрута
@@ -49,7 +81,7 @@ class Post extends Model
 
     /**
      * Автор статьи
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function user()
     {
@@ -62,7 +94,7 @@ class Post extends Model
      */
     public function publishing($publishing = true)
     {
-        $this->update(['published'=> $publishing]);
+        $this->update(['published' => $publishing]);
     }
 
     /**
