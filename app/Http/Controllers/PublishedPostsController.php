@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Notifications\PostPublished;
-use App\Post;
+use App\Models\Post;
 
 /**
  * Контроллер для публикации постов

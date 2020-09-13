@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Post;
-use App\Tag;
-use App\User;
-use Illuminate\Support\Collection;
+use App\Models\Post;
+use App\Models\User;
 
 /**
  * Придерживаемся общепринятого наименования методов контроллера
@@ -26,10 +24,11 @@ class PostsController extends Controller
      */
     public function index()
     {
-        // TODO: я правильно понял, что достаточно в этом методе указать связь with() ?
-        // TODO: как-то сомнительно, ведь этот метод вызывается только для определенной страницы,
-        // TODO: а теги нужно выводить везде, где есть статья/статьи
-        $posts = Post::publishedPosts()->with('tags')->with('user')->latest()->get();
+        $posts = Post::publishedPosts()
+            ->with('tags')
+            ->with('user')
+            ->latest()
+            ->get();
 
         return view('main.index', compact('posts'));
     }
@@ -42,9 +41,6 @@ class PostsController extends Controller
      */
     public function show(Post $post)
     {
-        // TODO: сначала хотел сделать через PostPolicy,
-        // TODO: но пользователь ведь может быть не авторизован.
-        // TODO: Policy, на сколько я понял, относятся только к авторизованным пользователям?
         abort_unless(User::isAdmin() || $post->published, 403);
 
         return view('posts.show', compact('post'));
@@ -86,22 +82,7 @@ class PostsController extends Controller
 
         $post = Post::create($request);
 
-        $tags = collect(request('tags'))->keyBy(
-            function ($item) {
-                return $item;
-            }
-        );
-
-        // TODO: Тот же вопрос, что и в методе update()
-        foreach ($tags as $tag) {
-            if (Tag::where('name', $tag)->first()) {
-                $tag = Tag::where('name', $tag)->first();
-            } else {
-                $tag = Tag::create(['name' => $tag, 'slug' => (new Tag)->generateSlug($tag)]);
-            }
-
-            $post->tags()->attach($tag);
-        }
+        $post->syncTags($post);
 
         /** Сохраняет в сессию на 1 переход */
         flash('Пост успешно создан', 'success');
@@ -143,33 +124,7 @@ class PostsController extends Controller
 
         $post->update($request);
 
-        /** @var Collection $postTags */
-        $postTags = collect($post->tags->keyBy('name'));
-
-        $tags = collect(request('tags'))->keyBy(
-            function ($item) {
-                return $item;
-            }
-        );
-
-        $syncIds = $postTags->intersectByKeys($tags)->pluck('id')->toArray();
-
-        $tagsToAttach = $tags->diffKeys($postTags);
-
-        // TODO: Я хочу здесь вызывать метод, который будет генерировать адрес для нового тега.
-        // TODO: (не хочется делать как в уроке с выводом имени тега в адресной строке)
-        // TODO: Но мне кажется, что этот код излишне сложен и его можно оптимизировать
-        foreach ($tagsToAttach as $tag) {
-            if (Tag::where('name', $tag)->first()) {
-                $tag = Tag::where('name', $tag)->first();
-            } else {
-                $tag = Tag::create(['name' => $tag, 'slug' => (new Tag)->generateSlug($tag)]);
-            }
-
-            $syncIds[] = $tag->id;
-        }
-
-        $post->tags()->sync($syncIds);
+        $post->syncTags($post);
 
         flash('Пост успешно изменен', 'success');
 

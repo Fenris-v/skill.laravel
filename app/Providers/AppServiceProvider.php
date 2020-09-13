@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Tag;
+use App\Models\Tag;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\View;
 

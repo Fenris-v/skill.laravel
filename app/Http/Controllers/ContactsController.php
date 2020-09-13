@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Callback;
+use App\Models\Callback;
 
 class ContactsController extends Controller
 {

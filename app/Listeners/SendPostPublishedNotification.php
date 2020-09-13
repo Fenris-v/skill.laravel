@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\PostPublished;
-use App\Group;
+use App\Models\Group;
 use Illuminate\Support\Facades\Notification;
 
 class SendPostPublishedNotification

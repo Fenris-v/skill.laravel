@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\PostRemoved;
-use App\Group;
+use App\Models\Group;
 use Illuminate\Support\Facades\Notification;
 
 class SendPostRemovedNotification

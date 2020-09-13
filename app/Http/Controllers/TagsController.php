@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Tag;
+use App\Models\Tag;
 
 class TagsController extends Controller
 {
@@ -13,7 +13,7 @@ class TagsController extends Controller
      */
     public function index(Tag $tag)
     {
-        $posts = $tag->posts()->latest()->with('tags')->get();
+        $posts = $tag->posts()->publishedPosts()->latest()->with('tags')->get();
 
         return view('main.index', compact('posts'));
     }

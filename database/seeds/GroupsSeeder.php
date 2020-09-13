@@ -1,6 +1,6 @@
 <?php
 
-use App\Group;
+use App\Models\Group;
 use Illuminate\Database\Seeder;
 
 class GroupsSeeder extends Seeder

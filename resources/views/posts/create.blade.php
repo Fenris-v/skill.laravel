@@ -48,7 +48,7 @@
                     <div class="form-group">
                         @include('posts.edit-tags')
                     </div>
-                    @if(\App\User::isAdmin())
+                    @if(\App\Models\User::isAdmin())
                         <div class="form-group form-check">
                             <input {{ old('published') === 'on' ? 'checked' : '' }}
                                    type="checkbox" class="form-check-input" id="published" name="published">

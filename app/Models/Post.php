@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use App\Events\PostCreated;
 use App\Events\PostEdited;
@@ -10,6 +10,8 @@ use App\Events\PostUnpublished;
 use App\Traits\GenerateSlug;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+use Illuminate\Support\Collection;
 
 use function route;
 
@@ -111,5 +113,32 @@ class Post extends Model
     public function tags()
     {
         return $this->belongsToMany(Tag::class);
+    }
+
+    /**
+     * Изменяет теги поста
+     * @param Post $post
+     */
+    public function syncTags(Post $post)
+    {
+        $tags = collect(request('tags'))->keyBy(
+            function ($item) {
+                return $item;
+            }
+        );
+
+        $syncIds = [];
+
+        foreach ($tags as $tag) {
+            $tagObj = Tag::where('name', $tag)->first();
+
+            if (!$tagObj) {
+                $tagObj = Tag::create(['name' => $tag, 'slug' => (new Tag)->generateSlug($tag)]);
+            }
+
+            $syncIds[] = $tagObj->id;
+        }
+
+        $post->tags()->sync($syncIds);
     }
 }
