@@ -18,7 +18,7 @@ class SendPostEditedNotification
     {
         $users = Group::with('users')->admins()->first()->users;
 
-        $users[] = $event->post->user;
+        addToUsersIfNotExists($users, $event->post->user);
 
         Notification::send($users, new \App\Notifications\PostEdited($event->post));
     }

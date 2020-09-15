@@ -7,17 +7,18 @@ use App\Events\PostEdited;
 use App\Events\PostPublished;
 use App\Events\PostRemoved;
 use App\Events\PostUnpublished;
-use App\Traits\GenerateSlug;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-use Illuminate\Support\Collection;
+use Spatie\Sluggable\HasSlug;
+
+use Spatie\Sluggable\SlugOptions;
 
 use function route;
 
 class Post extends Model
 {
-    use GenerateSlug;
+    use HasSlug;
 
     protected $dispatchesEvents = [
         'created' => PostCreated::class,
@@ -35,12 +36,12 @@ class Post extends Model
         static::updated(
             function ($post) {
                 if (
-                    url()->current() === route('postPublishing', $post->slug) &&
+                    url()->current() === route('posts.publishing', $post->slug) &&
                     strtoupper(request()->method()) === 'POST'
                 ) {
                     event(new PostPublished($post));
                 } elseif (
-                    url()->current() === route('postPublishing', $post->slug) &&
+                    url()->current() === route('posts.publishing', $post->slug) &&
                     strtoupper(request()->method()) === 'DELETE'
                 ) {
                     event(new PostUnpublished($post));
@@ -133,12 +134,23 @@ class Post extends Model
             $tagObj = Tag::where('name', $tag)->first();
 
             if (!$tagObj) {
-                $tagObj = Tag::create(['name' => $tag, 'slug' => (new Tag)->generateSlug($tag)]);
+                $tagObj = Tag::create(['name' => $tag]);
             }
 
             $syncIds[] = $tagObj->id;
         }
 
         $post->tags()->sync($syncIds);
+    }
+
+    /**
+     * Создает slug
+     * @return SlugOptions
+     */
+    public function getSlugOptions(): SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom('title')
+            ->saveSlugsTo('slug');
     }
 }

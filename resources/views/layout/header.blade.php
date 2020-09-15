@@ -4,7 +4,7 @@
             <a class="text-muted" href="#">Subscribe</a>
         </div>
         <div class="col-4 text-center">
-            <a class="blog-header-logo text-dark" href="{{ route('mainPage') }}">Laravel Blog</a>
+            <a class="blog-header-logo text-dark" href="{{ route('posts.index') }}">Laravel Blog</a>
         </div>
         <div class="col-4 d-flex justify-content-end align-items-center">
             <a class="text-muted" href="#" aria-label="Search">
@@ -45,13 +45,13 @@
 
 <div class="nav-scroller py-1 mb-5">
     <nav class="nav d-flex justify-content-between">
-        <a class="p-2 text-muted" href="{{ route('mainPage') }}">Главная</a>
+        <a class="p-2 text-muted" href="{{ route('posts.index') }}">Главная</a>
         <a class="p-2 text-muted" href="{{ route('about') }}">О нас</a>
         <a class="p-2 text-muted" href="{{ route('contacts') }}">Контакты</a>
-        <a class="p-2 text-muted" href="{{ route('postsCreate') }}">Создать статью</a>
+        <a class="p-2 text-muted" href="{{ route('posts.create') }}">Создать статью</a>
         @if(\App\Models\User::isAdmin())
-            <a class="p-2 text-muted" href="{{ route('unpublishedPosts') }}">Неопубликованные статьи</a>
-            <a class="p-2 text-muted" href="{{ route('callbacksList') }}">Админ</a>
+            <a class="p-2 text-muted" href="{{ route('posts.unpublished') }}">Неопубликованные статьи</a>
+            <a class="p-2 text-muted" href="{{ route('callbacks.list') }}">Админ</a>
         @endif
     </nav>
 </div>

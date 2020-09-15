@@ -12,13 +12,6 @@ class GroupsSeeder extends Seeder
      */
     public function run()
     {
-        $items = [
-            ['name' => 'Админ'],
-            ['name' => 'Пользователь']
-        ];
-
-        foreach ($items as $item) {
-            Group::create($item);
-        }
+        Group::create(['name' => 'Пользователь']);
     }
 }

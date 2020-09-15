@@ -10,34 +10,27 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/posts/tags/{tag}', [TagsController::class, 'index'])->name('postsByTag');
+Route::get('/posts/tags/{tag}', [TagsController::class, 'index'])->name('posts.tag');
 
 Route::get('/posts/users/{user}', [UsersController::class, 'index'])->name('postsByUser');
 
-/**
- * Следующие маршруты можно было бы заменить на
- * Route::resource('/posts', 'PostsController');
- * Но тогда список статей был бы не на главной, а на '/posts'
- */
-// TODO: а если использовать Route::resource(),
-// TODO: то исчезает возможность использовать именованные маршруты?
-Route::get('/', [PostsController::class, 'index'])->name('mainPage');
-Route::get('/posts/create', [PostsController::class, 'create'])->name('postsCreate');
-Route::get('/posts/{post}', [PostsController::class, 'show'])->name('postShow');
-Route::post('/', [PostsController::class, 'store']);
-Route::get('/posts/{post}/edit', [PostsController::class, 'edit'])->name('postEdit');
-Route::patch('/posts/{post}', [PostsController::class, 'update']);
-Route::delete('/posts/{post}', [PostsController::class, 'destroy']);
+Route::get('/posts/unpublished', [PostsController::class, 'showUnpublished'])->name('posts.unpublished');
 
-// TODO: на сколько корректным является добавление своих маршрутов, не общепринятых?
-// TODO: мне кажется следующий имеет место быть в моей реализации
-// TODO: создавать отдельный контроллер тут, мне кажется будет лишним
-Route::get('/unpublished', [PostsController::class, 'showUnpublished'])->name('unpublishedPosts');
 
-Route::post('/publishing-posts/{post}', [PublishedPostsController::class, 'store'])->name('postPublishing');
-Route::delete('/publishing-posts/{post}', [PublishedPostsController::class, 'destroy']);
+Route::get('/', [PostsController::class, 'index'])->name('posts.index');
 
-Route::get('/admin/feedbacks', [ContactsController::class, 'index'])->name('callbacksList');
+// TODO: По какой-то причине не работает запись вида:
+/** Route::resource('posts', PostsController::class)->except(['index']); */
+// TODO: Можете прокомментировать? Есть предположение, что баг Laravel 8, т.к. судя по докам, раньше нельзя было так писать
+// TODO: Ошибка заключается в неймспейсе, ларавел пытается найти класс в несуществующем неймспейсе:
+/** Target class [App\Http\Controllers\App\Http\Controllers\PostsController] does not exist. */
+Route::resource('posts', 'PostsController')->except(['index']);
+
+Route::post('/posts/{post}/publishing', [PublishedPostsController::class, 'store'])->name('posts.publishing');
+Route::delete('/posts/{post}/publishing', [PublishedPostsController::class, 'destroy']);
+
+Route::get('/admin/feedbacks', [ContactsController::class, 'index'])->name('callbacks.list');
+
 Route::get('/contacts', [ContactsController::class, 'create'])->name('contacts');
 Route::post('/contacts', [ContactsController::class, 'store']);
 
@@ -45,12 +38,6 @@ Route::get('/about', [AboutController::class, 'index'])->name('about');
 
 Auth::routes();
 
-// TODO: Меня смущало то, что при гет запросе на /logout выдавалась ошибка
-// TODO: Прошу прокомментировать такое решение.
-// TODO: Наверное, лучше было бы через middleware,
-// TODO: но, как я понял, всё равно ведь маршрут пришлось бы регистрировать,
-// TODO: т.к. в Auth::routes() его нет, а это простое решение,
-// TODO: ведь ничего кроме редиректа здесь не нужно
 Route::get(
     '/logout',
     function () {

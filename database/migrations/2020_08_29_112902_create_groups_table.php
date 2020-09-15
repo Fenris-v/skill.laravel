@@ -18,6 +18,8 @@ class CreateGroupsTable extends Migration
             $table->string('name')->unique();
             $table->timestamps();
         });
+
+        DB::table('groups')->insert(['name' => 'Админ']);
     }
 
     /**

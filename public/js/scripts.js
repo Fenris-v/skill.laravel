@@ -1,14 +1,27 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    // /**
+    //  * Подключение tinymce
+    //  * @type {Element}
+    //  */
+    // tinymce.init({
+    //     selector: 'textarea#htmlInput',
+    //     height: 300,
+    //     language: 'ru'
+    // });
     /**
-     * Подключение tinymce
-     * @type {Element}
+     * Подключение cke
      */
-    tinymce.init({
-        selector: 'textarea#htmlInput',
-        height: 300,
-        language: 'ru'
-    });
+    ClassicEditor
+        .create(document.querySelector('textarea#htmlInput'), {
+            language: 'ru'
+        })
+        // .then( editor => {
+        //     console.log( editor );
+        // } )
+        .catch(error => {
+            console.error(error);
+        });
 
     /**
      * Выпадающее меню пользователя

@@ -105,4 +105,8 @@ h1, h2, h3, h4, h5, h6 {
   z-index: 1;
   margin-right: 15px; }
 
+.form-group .ck-content {
+  min-height: 300px;
+  max-height: 600px; }
+
 /*# sourceMappingURL=app.css.map */

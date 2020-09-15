@@ -34,6 +34,19 @@ class CreateGroupUserTable extends Migration
                     ->cascadeOnUpdate();
             }
         );
+
+        $userId = DB::table('users')
+            ->where('name', '=', 'Admin')
+            ->first()
+            ->id;
+
+        $groupId = DB::table('groups')
+            ->where('name', '=', 'Админ')
+            ->first()
+            ->id;
+
+        DB::table('group_user')
+            ->insert(['user_id' => $userId, 'group_id' => $groupId]);
     }
 
     /**

@@ -11,7 +11,7 @@
                     <h2 class="blog-post-title">{{ $post->title }}
                         @can('update', $post)
                             <a class="btn-outline-primary btn"
-                               href="{{ route('postEdit', ['post' => $post->getRouteKey()]) }}">Изменить</a>
+                               href="{{ route('posts.edit', ['post' => $post->getRouteKey()]) }}">Изменить</a>
                         @endcan
 
                         @if(\App\Models\User::isAdmin())
@@ -19,7 +19,7 @@
                                id="publishing"
                                href="#">{{ $post->published ? 'Снять с публикации' : 'Опубликовать' }}</a>
 
-                            <form id="publishing-form" action="{{ route('postPublishing', $post->getRouteKey()) }}" method="POST"
+                            <form id="publishing-form" action="{{ route('posts.publishing', $post->getRouteKey()) }}" method="POST"
                                   class="d-none">
                                 @csrf
 
@@ -34,7 +34,7 @@
                     @include('posts.tags', ['tags' => $post->tags])
 
                     {!! $post->text !!}
-                    <a class="btn btn-primary" href="{{ route('mainPage') }}">Вернуться</a>
+                    <a class="btn btn-primary" href="{{ route('posts.index') }}">Вернуться</a>
                 </div>
             </div>
 

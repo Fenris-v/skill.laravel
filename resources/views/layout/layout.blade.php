@@ -33,6 +33,7 @@
 </div>
 
 <script src="/js/jquery-3.4.1.min.js"></script>
-<script src="/assets/tinymce/tinymce.min.js"></script>
+<script src="/assets/ckeditor5-build-classic/build/ckeditor.js"></script>
+<script src="/assets/ckeditor5-build-classic/build/translations/ru.js"></script>
 <script src="/js/select2.full.min.js"></script>
 <script src="/js/scripts.js"></script>

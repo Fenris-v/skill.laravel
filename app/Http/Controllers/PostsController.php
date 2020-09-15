@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PostForm;
 use App\Models\Post;
 use App\Models\User;
 
@@ -38,10 +39,11 @@ class PostsController extends Controller
      * Передает коллекцию конкретной статьи
      * @param Post $post
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function show(Post $post)
     {
-        abort_unless(User::isAdmin() || $post->published, 403);
+        $this->authorize('showPost', $post);
 
         return view('posts.show', compact('post'));
     }
@@ -59,28 +61,18 @@ class PostsController extends Controller
      * Метод, который валидирует и добавляет статьи в БД.
      * В случае успеха - выполняет редирект на главную.
      * В случае ошибки - возвращает на страницу создания статьи.
-     * @param Post $post
+     * @param PostForm $request
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Post $post)
+    public function store(PostForm $request)
     {
-        $request = $this->validate(
-            request(),
-            [
-                'title' => 'bail|required|min:5|max:100',
-                'short_desc' => 'required|max:255',
-                'text' => 'required',
-            ]
-        );
+        $validated = $request->validated();
 
-        $request['slug'] = $post->generateSlug($request['title']);
+        $validated['published'] = request()->input('published') ?? false;
 
-        $request['published'] = request()->input('published') ?? false;
+        $validated['user_id'] = auth()->id();
 
-        $request['user_id'] = auth()->id();
-
-        $post = Post::create($request);
+        $post = Post::create($validated);
 
         $post->syncTags($post);
 
@@ -106,29 +98,22 @@ class PostsController extends Controller
     /**
      * Обновление изменений
      * @param Post $post
+     * @param PostForm $request
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     * @throws \Illuminate\Validation\ValidationException
      */
-    public function update(Post $post)
+    public function update(Post $post, PostForm $request)
     {
-        $request = $this->validate(
-            request(),
-            [
-                'title' => 'bail|required|min:5|max:100',
-                'short_desc' => 'required|max:255',
-                'text' => 'required',
-            ]
-        );
+        $validated = $request->validated();
 
-        $request['published'] = request()->input('published') ?? false;
+        $validated['published'] = request()->input('published') ?? false;
 
-        $post->update($request);
+        $post->update($validated);
 
         $post->syncTags($post);
 
         flash('Пост успешно изменен', 'success');
 
-        return redirect(route('postShow', $post->getRouteKey()));
+        return redirect(route('posts.show', $post->getRouteKey()));
     }
 
     /**
@@ -143,18 +128,17 @@ class PostsController extends Controller
 
         flash('Пост удален', 'danger');
 
-        return redirect(route('mainPage'));
+        return redirect(route('posts.index'));
     }
 
     /**
      * Все неопубликованные посты
-     * @param Post $post
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function showUnpublished(Post $post)
+    public function showUnpublished()
     {
-        $this->authorize('viewAny', $post);
+        abort_if(!User::isAdmin(), 403);
 
         $posts = Post::unpublishedPosts()->latest()->get();
 

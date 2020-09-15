@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-use App\Traits\GenerateSlug;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Sluggable\HasSlug;
+use Spatie\Sluggable\SlugOptions;
 
 class Tag extends Model
 {
-    use GenerateSlug;
+    use HasSlug;
 
     protected $fillable = ['name', 'slug'];
 
@@ -36,5 +37,16 @@ class Tag extends Model
     public static function tagsCloud()
     {
         return (new static)->has('posts')->get();
+    }
+
+    /**
+     * Создает slug
+     * @return SlugOptions
+     */
+    public function getSlugOptions(): SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom('name')
+            ->saveSlugsTo('slug');
     }
 }

@@ -3,7 +3,7 @@
 
 {{ $post->short_desc }}
 
-@component('mail::button', ['url' => route('mainPage')])
+@component('mail::button', ['url' => route('posts.index')])
 Перейти на сайт
 @endcomponent
 
