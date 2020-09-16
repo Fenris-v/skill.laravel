@@ -59,20 +59,12 @@ class User extends Authenticatable
 
     /**
      * Проверяет является ли текущий пользователь админом
+     * @param int $userId
      * @return bool
      */
-    public static function isAdmin(): bool
+    public function isAdmin(): bool
     {
-        if (auth()->check()) {
-            return User::where('id', auth()->id())->whereHas(
-                'groups',
-                function ($query) {
-                    $query->where('id', Group::ADMIN_ID);
-                }
-            )->exists();
-        }
-
-        return false;
+        return $this->groups()->where('id', Group::ADMIN_ID)->exists();
     }
 
     /**
@@ -82,5 +74,20 @@ class User extends Authenticatable
     public function posts()
     {
         return $this->hasMany(Post::class);
+    }
+
+    /**
+     * Выбирает всех админов
+     * @param $query
+     * @return mixed
+     */
+    public function scopeAdmins($query)
+    {
+        return $query->whereHas(
+            'groups',
+            function ($query) {
+                $query->where('id', Group::ADMIN_ID);
+            }
+        );
     }
 }

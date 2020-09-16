@@ -49,7 +49,7 @@
         <a class="p-2 text-muted" href="{{ route('about') }}">О нас</a>
         <a class="p-2 text-muted" href="{{ route('contacts') }}">Контакты</a>
         <a class="p-2 text-muted" href="{{ route('posts.create') }}">Создать статью</a>
-        @if(\App\Models\User::isAdmin())
+        @if(Auth::user() && Auth::user()->isAdmin())
             <a class="p-2 text-muted" href="{{ route('posts.unpublished') }}">Неопубликованные статьи</a>
             <a class="p-2 text-muted" href="{{ route('callbacks.list') }}">Админ</a>
         @endif

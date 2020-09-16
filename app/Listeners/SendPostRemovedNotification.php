@@ -4,10 +4,14 @@ namespace App\Listeners;
 
 use App\Events\PostRemoved;
 use App\Models\Group;
+use App\Models\User;
+use App\Traits\UserCollectionForMailing;
 use Illuminate\Support\Facades\Notification;
 
 class SendPostRemovedNotification
 {
+    use UserCollectionForMailing;
+
     /**
      * Уведомляет админов и автора об удалении поста
      *
@@ -16,9 +20,9 @@ class SendPostRemovedNotification
      */
     public function handle(PostRemoved $event)
     {
-        $users = Group::with('users')->admins()->first()->users;
+        $users = User::admins()->get();
 
-        addToUsersIfNotExists($users, $event->post->user);
+        $this->addToUsersIfNotExists($users, $event->post->user);
 
         Notification::send($users, new \App\Notifications\PostRemoved($event->post));
     }

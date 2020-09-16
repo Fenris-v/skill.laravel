@@ -12,7 +12,12 @@
 
                 <hr>
 
-                @include('posts.post-form', ['action' => route('posts.update', $post->getRouteKey()), 'edit' => true])
+                <form class="mb-2" action="{{ route('posts.update', $post->getRouteKey()) }}" method="POST">
+                    @method('PATCH')
+                    @include('posts.post-form', ['edit' => true])
+
+                    <button type="submit" class="btn btn-primary">Изменить</button>
+                </form>
 
                 <form class="mb-2" action="{{ route('posts.destroy', $post->getRouteKey()) }}" method="POST">
 

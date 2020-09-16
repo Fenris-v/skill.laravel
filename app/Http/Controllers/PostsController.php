@@ -4,7 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PostForm;
 use App\Models\Post;
-use App\Models\User;
+use Auth;
+use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Redirector;
+use Illuminate\View\View;
 
 /**
  * Придерживаемся общепринятого наименования методов контроллера
@@ -21,7 +28,7 @@ class PostsController extends Controller
     /**
      * Возвращает отображение главной страницы
      * Передает в нее выборку статей
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return Application|Factory|View
      */
     public function index()
     {
@@ -38,19 +45,21 @@ class PostsController extends Controller
      * Возвращает отображение детальной страницы статьи
      * Передает коллекцию конкретной статьи
      * @param Post $post
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @return Application|Factory|View
+     * @throws AuthorizationException
      */
     public function show(Post $post)
     {
-        $this->authorize('showPost', $post);
+        $isAdmin = Auth::user() && Auth::user()->isAdmin();
+
+        abort_unless($isAdmin || $post->published, 403);
 
         return view('posts.show', compact('post'));
     }
 
     /**
      * Возвращает отображение создания статьи
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return Application|Factory|View
      */
     public function create()
     {
@@ -62,7 +71,7 @@ class PostsController extends Controller
      * В случае успеха - выполняет редирект на главную.
      * В случае ошибки - возвращает на страницу создания статьи.
      * @param PostForm $request
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @return Application|RedirectResponse|Redirector
      */
     public function store(PostForm $request)
     {
@@ -85,8 +94,8 @@ class PostsController extends Controller
     /**
      * Изменение поста
      * @param Post $post
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @return Application|Factory|View
+     * @throws AuthorizationException
      */
     public function edit(Post $post)
     {
@@ -99,13 +108,21 @@ class PostsController extends Controller
      * Обновление изменений
      * @param Post $post
      * @param PostForm $request
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @return Application|RedirectResponse|Redirector
      */
     public function update(Post $post, PostForm $request)
     {
         $validated = $request->validated();
 
         $validated['published'] = request()->input('published') ?? false;
+
+        $slug = $request->validate(
+            [
+                'slug' => 'bail|required|regex:/^[a-zA-Z0-9_-]+$/|unique:posts'
+            ]
+        );
+
+        $validated['slug'] = $slug['slug'];
 
         $post->update($validated);
 
@@ -119,8 +136,8 @@ class PostsController extends Controller
     /**
      * Удаление поста
      * @param Post $post
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     * @throws \Exception
+     * @return Application|RedirectResponse|Redirector
+     * @throws Exception
      */
     public function destroy(Post $post)
     {
@@ -133,14 +150,15 @@ class PostsController extends Controller
 
     /**
      * Все неопубликованные посты
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @param Post $post
+     * @return Application|Factory|View
+     * @throws AuthorizationException
      */
-    public function showUnpublished()
+    public function showUnpublished(Post $post)
     {
-        abort_if(!User::isAdmin(), 403);
+        $this->authorize('showPost', $post);
 
-        $posts = Post::unpublishedPosts()->latest()->get();
+        $posts = $post->unpublishedPosts()->latest()->get();
 
         return view('main.index', compact('posts'));
     }

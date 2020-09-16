@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Group;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -35,13 +37,11 @@ class CreateGroupUserTable extends Migration
             }
         );
 
-        $userId = DB::table('users')
-            ->where('name', '=', 'Admin')
+        $userId = User::where('name', '=', 'Admin')
             ->first()
             ->id;
 
-        $groupId = DB::table('groups')
-            ->where('name', '=', 'Админ')
+        $groupId = Group::where('name', '=', 'Админ')
             ->first()
             ->id;
 

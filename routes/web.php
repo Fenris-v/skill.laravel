@@ -6,7 +6,6 @@ use App\Http\Controllers\PostsController;
 use App\Http\Controllers\PublishedPostsController;
 use App\Http\Controllers\TagsController;
 use App\Http\Controllers\UsersController;
-use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -37,10 +36,3 @@ Route::post('/contacts', [ContactsController::class, 'store']);
 Route::get('/about', [AboutController::class, 'index'])->name('about');
 
 Auth::routes();
-
-Route::get(
-    '/logout',
-    function () {
-        return redirect(RouteServiceProvider::HOME);
-    }
-);

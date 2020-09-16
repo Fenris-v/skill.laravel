@@ -12,7 +12,11 @@
 
                 <hr>
 
-                @include('posts.post-form', ['action' => route('posts.store')])
+                <form action="{{ route('posts.store') }}" method="post">
+                    @include('posts.post-form')
+
+                    <button type="submit" class="btn btn-primary">Создать</button>
+                </form>
 
             </div>
 

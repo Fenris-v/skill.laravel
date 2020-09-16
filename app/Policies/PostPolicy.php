@@ -19,18 +19,17 @@ class PostPolicy
      */
     public function update(User $user, Post $post)
     {
-        return $post->user_id === $user->id || $user::isAdmin();
+        return $post->user_id === $user->id || $user->isAdmin();
     }
 
     /**
      * Политика отвечающая за то, чтобы только админ мог просматривать неопубликованные посты.
      *
      * @param User $user
-     * @param Post $post
      * @return bool
      */
-    public function showPost(User $user, Post $post)
+    public function showPost(User $user)
     {
-        return $user::isAdmin() || $post->published;
+        return $user->isAdmin();
     }
 }

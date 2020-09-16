@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Group;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -19,7 +20,7 @@ class CreateGroupsTable extends Migration
             $table->timestamps();
         });
 
-        DB::table('groups')->insert(['name' => 'Админ']);
+        Group::create(['name' => 'Админ']);
     }
 
     /**

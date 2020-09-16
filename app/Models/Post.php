@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Events\PostCreated;
 use App\Events\PostEdited;
-use App\Events\PostPublished;
 use App\Events\PostRemoved;
 use App\Events\PostUnpublished;
 use Illuminate\Database\Eloquent\Model;
@@ -13,8 +12,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Sluggable\HasSlug;
 
 use Spatie\Sluggable\SlugOptions;
-
-use function route;
 
 class Post extends Model
 {
@@ -35,17 +32,13 @@ class Post extends Model
         /** Собственная логика на событие 'updated' */
         static::updated(
             function ($post) {
-                if (
-                    url()->current() === route('posts.publishing', $post->slug) &&
-                    strtoupper(request()->method()) === 'POST'
-                ) {
-                    event(new PostPublished($post));
-                } elseif (
-                    url()->current() === route('posts.publishing', $post->slug) &&
-                    strtoupper(request()->method()) === 'DELETE'
-                ) {
+                $updatedFields = collect($post->getDirty())->forget('updated_at');
+
+                if ($updatedFields->count() > 1 || !$updatedFields->keys()->contains('published')) {
+                    event(new PostEdited($post));
+                } elseif ($updatedFields->get('published') === false) {
                     event(new PostUnpublished($post));
-                } else {
+                } elseif ($updatedFields->get('published') === 'on') {
                     event(new PostEdited($post));
                 }
             }
@@ -151,6 +144,7 @@ class Post extends Model
     {
         return SlugOptions::create()
             ->generateSlugsFrom('title')
-            ->saveSlugsTo('slug');
+            ->saveSlugsTo('slug')
+            ->doNotGenerateSlugsOnUpdate();
     }
 }

@@ -8,6 +8,8 @@ class Group extends Model
 {
     const ADMIN_ID = 1;
 
+    protected $fillable = ['name'];
+
     /**
      * Создаем связь "многие ко многим"
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany

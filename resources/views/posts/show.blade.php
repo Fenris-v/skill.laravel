@@ -14,7 +14,7 @@
                                href="{{ route('posts.edit', ['post' => $post->getRouteKey()]) }}">Изменить</a>
                         @endcan
 
-                        @if(\App\Models\User::isAdmin())
+                        @if(Auth::user() && Auth::user()->isAdmin())
                             <a class="btn {{ $post->published ? 'btn-outline-danger' : 'btn-outline-secondary' }}"
                                id="publishing"
                                href="#">{{ $post->published ? 'Снять с публикации' : 'Опубликовать' }}</a>
