@@ -1,9 +1,5 @@
 @php
-    use App\Models\Post;
-
-    $edit = $edit ?? false;
-    $post = $post ?? new Post;
-
+    $canEditSlug = $canEditSlug ?? false;
 @endphp
 
 @csrf
@@ -19,7 +15,7 @@
     @endif
 </div>
 
-@if($edit)
+@if($canEditSlug)
     <div class="form-group">
         <label for="slug">Адрес</label>
         <input type="text" class="form-control" id="title" value="{{ old('slug', $post->slug) }}"

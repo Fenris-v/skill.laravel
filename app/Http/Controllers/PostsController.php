@@ -116,13 +116,17 @@ class PostsController extends Controller
 
         $validated['published'] = request()->input('published') ?? false;
 
-        $slug = $request->validate(
-            [
-                'slug' => 'bail|required|regex:/^[a-zA-Z0-9_-]+$/|unique:posts'
-            ]
-        );
+        if ($request->slug) {
+            $slug = $request->validate(
+                [
+                    'slug' => 'bail|regex:/^[a-zA-Z0-9_-]+$/|unique:posts,slug,' . $post->id
+                ]
+            );
 
-        $validated['slug'] = $slug['slug'];
+            $validated['slug'] = $slug['slug'];
+        } else {
+            $post->generateSlug();
+        }
 
         $post->update($validated);
 

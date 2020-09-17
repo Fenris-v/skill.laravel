@@ -13,7 +13,7 @@
                 <hr>
 
                 <form action="{{ route('posts.store') }}" method="post">
-                    @include('posts.post-form')
+                    @include('posts.post-form', ['post' => new \App\Models\Post()])
 
                     <button type="submit" class="btn btn-primary">Создать</button>
                 </form>

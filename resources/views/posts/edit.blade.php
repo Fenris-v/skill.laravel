@@ -14,7 +14,7 @@
 
                 <form class="mb-2" action="{{ route('posts.update', $post->getRouteKey()) }}" method="POST">
                     @method('PATCH')
-                    @include('posts.post-form', ['edit' => true])
+                    @include('posts.post-form', ['canEditSlug' => true])
 
                     <button type="submit" class="btn btn-primary">Изменить</button>
                 </form>
