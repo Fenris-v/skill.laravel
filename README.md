@@ -7,3 +7,5 @@
 5.  GET - /items/{id}/edit - edit - изменить элемент
 6.  PATCH - /items/{id} - update - непосредственно изменение
 7.  DELETE - /items/{id} - destroy - удаление
+
+## _Почитать про фасад Form_
