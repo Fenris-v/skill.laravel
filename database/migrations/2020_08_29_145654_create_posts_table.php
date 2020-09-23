@@ -19,6 +19,7 @@ class CreatePostsTable extends Migration
             $table->string('slug')->unique();
             $table->text('short_desc')->nullable();
             $table->text('text')->nullable();
+            $table->string('image')->nullable();
             $table->unsignedInteger('user_id')->nullable();
             $table->boolean('published')->default(false);
             $table->timestamps();

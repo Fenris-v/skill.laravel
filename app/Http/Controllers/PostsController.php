@@ -50,9 +50,7 @@ class PostsController extends Controller
      */
     public function show(Post $post)
     {
-        $isAdmin = Auth::user() && Auth::user()->isAdmin();
-
-        abort_unless($isAdmin || $post->published, 403);
+        $this->authorize('showPost', $post);
 
         return view('posts.show', compact('post'));
     }

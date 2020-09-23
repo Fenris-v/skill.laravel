@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Post;
+use App\Models\Tag;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -12,15 +14,24 @@ class PostTagSeeder extends Seeder
      */
     public function run()
     {
-        $items = [
-            ['post_id' => 1, 'tag_id' => 1],
-            ['post_id' => 2, 'tag_id' => 1],
-            ['post_id' => 2, 'tag_id' => 2],
-            ['post_id' => 3, 'tag_id' => 2]
-        ];
+        $tagsId = [];
+        foreach (Tag::all() as $tag) {
+            $tagsId[] = $tag->id;
+        }
 
-        foreach ($items as $item) {
-            DB::table('post_tag')->insert($item);
+        foreach (Post::all() as $post) {
+            $keyTags = array_rand($tagsId, rand(1, 4));
+
+            $keyTags = is_array($keyTags) ? $keyTags : [$keyTags];
+
+            foreach ($keyTags as $key) {
+                DB::table('post_tag')->insert(
+                    [
+                        'post_id' => $post->id,
+                        'tag_id' => $tagsId[$key]
+                    ]
+                );
+            }
         }
     }
 }

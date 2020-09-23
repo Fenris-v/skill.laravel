@@ -7,17 +7,6 @@ use App\Models\Callback;
 class ContactsController extends Controller
 {
     /**
-     * Станица для админа, где выводятся все заявки
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    public function index()
-    {
-        $callbacks = Callback::latest()->get();
-
-        return view('contacts.admin', compact('callbacks'));
-    }
-
-    /**
      * Возвращает отображение страницы контактов
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */

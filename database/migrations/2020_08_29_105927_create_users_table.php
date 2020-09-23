@@ -4,6 +4,7 @@ use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Hash;
 
 class CreateUsersTable extends Migration
 {
@@ -30,8 +31,8 @@ class CreateUsersTable extends Migration
         User::create(
             [
                 'name' => 'Admin',
-                'email' => 'anatolijv236@gmail.com',
-                'password' => '$2y$10$AHIg2LBWiSlu7jrHakquqO6XIg4btsAXET41quUTFaoxsmPwBXuKe' // 'password'
+                'email' => 'admin@gmail.com',
+                'password' => Hash::make('password')
             ]
         );
     }
