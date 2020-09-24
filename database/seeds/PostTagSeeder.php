@@ -3,7 +3,6 @@
 use App\Models\Post;
 use App\Models\Tag;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class PostTagSeeder extends Seeder
 {
@@ -25,12 +24,7 @@ class PostTagSeeder extends Seeder
             $keyTags = is_array($keyTags) ? $keyTags : [$keyTags];
 
             foreach ($keyTags as $key) {
-                DB::table('post_tag')->insert(
-                    [
-                        'post_id' => $post->id,
-                        'tag_id' => $tagsId[$key]
-                    ]
-                );
+                $post->tags()->attach($tagsId[$key]);
             }
         }
     }

@@ -3,7 +3,6 @@
 namespace App\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
-use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Auth;
 
 class AdminPolicy
@@ -13,12 +12,16 @@ class AdminPolicy
     /**
      * Determine whether the user can view the model.
      *
-     * @return mixed
+     * @return bool
      */
     public function view()
     {
-        return Auth::user()->isAdmin()
-            ? Response::allow()
-            : Response::deny('test');
+        // TODO: Что-то я так и не понял почему данная политика у меня не заработала.
+        // TODO: Пробовал разные варианты, в том числе в аргументах метода указывал User $user, как в документации
+        // TODO: В контроллере вызывал таким образом
+        /** $this->authorize('view'); */
+        // TODO: В ответ всегда получал 403.
+        // TODO: Хотя думаю, что в данном случае middleware лучше подойдет, т.к. применяю сразу на весь контроллер
+        return Auth::user()->isAdmin();
     }
 }

@@ -5,7 +5,6 @@ namespace App\Listeners;
 use App\Events\PostCreated;
 use App\Models\User;
 use App\Traits\UserCollectionForMailing;
-use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Notification;
 
 class SendPostCreatedNotification
@@ -17,7 +16,6 @@ class SendPostCreatedNotification
      *
      * @param PostCreated $event
      * @return void
-     * @throws GuzzleException
      */
     public function handle(PostCreated $event)
     {
@@ -27,6 +25,6 @@ class SendPostCreatedNotification
 
         Notification::send($users, new \App\Notifications\PostCreated($event->post));
 
-        pushall($event->post->title, $event->post->shrot_desc);
+        pushall($event->post->title, $event->post->short_desc);
     }
 }

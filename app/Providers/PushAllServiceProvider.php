@@ -7,9 +7,6 @@ use Illuminate\Support\ServiceProvider;
 
 class PushAllServiceProvider extends ServiceProvider
 {
-    const MAX_TITLE_LENGTH = 80;
-    const MAX_TEXT_LENGTH = 500;
-
     /**
      * Register services.
      *

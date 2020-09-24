@@ -38,16 +38,11 @@ class MailingCommand extends Command
      *
      * @return int
      */
-    // TODO: правильно я понимаю, что если написать без цикла таким образом:
-    /** Mail::to(User::pluck('email'))->send(new WeeklyMailing); */
-    // TODO: то у каждого в письме отобразится список получателей?
     public function handle()
     {
         $users = User::pluck('email');
 
-        if (!$users || count($users) === 0) {
-            // TODO: существуют ли какие-то стандарты о том,
-            // TODO: какой код возвращать в случае той или иной ошибки?
+        if (!$users) {
             return 1;
         }
 

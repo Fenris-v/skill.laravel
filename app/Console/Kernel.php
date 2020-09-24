@@ -24,13 +24,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // TODO: на сколько корректна запись в кронтаб с указанием пути от тильды, т.е. вида: ~/www/skillbox/...
-        // TODO: как я понимаю, на сервере из-за такой запись могут возникнуть проблемы,
-        // TODO: т.к. может быть рут пользователь и пользователь на котором лежит проект
-
-        // TODO: и еще вопрос, подтянетеся ли сюда таймзона из конфигураций?
-        // TODO: или тут отдельно нужно очевидно ее указать?
-        $schedule->command('cron:mailing')->mondays()->at('18:30');
+        $schedule->command('cron:mailing')
+            ->timezone('Europe/Moscow')
+            ->mondays()->at('18:30');
     }
 
     /**

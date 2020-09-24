@@ -14,13 +14,7 @@ class GroupUserSeeder extends Seeder
     public function run()
     {
         foreach (User::all() as $user) {
-            DB::table('group_user')
-                ->insert(
-                    [
-                        'user_id' => $user->id,
-                        'group_id' => 2
-                    ]
-                );
+            $user->groups()->attach(2);
         }
     }
 }
