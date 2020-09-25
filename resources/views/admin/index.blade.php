@@ -1,6 +1,6 @@
 @php
     use App\Models\Post;
-    $posts = Post::all();
+    $posts = Post::all()
 @endphp
 
 @extends('admin.layouts.layout')

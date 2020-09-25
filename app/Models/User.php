@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -57,7 +59,7 @@ class User extends Authenticatable
 
     /**
      * Создаем связь "многие ко многим"
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
     public function groups()
     {
@@ -66,7 +68,6 @@ class User extends Authenticatable
 
     /**
      * Проверяет является ли текущий пользователь админом
-     * @param int $userId
      * @return bool
      */
     public function isAdmin(): bool
@@ -76,7 +77,7 @@ class User extends Authenticatable
 
     /**
      * Все посты пользователя
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function posts()
     {

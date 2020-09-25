@@ -10,13 +10,7 @@
                     <h2 class="blog-post-title">{{ $post->title }}
                         @can('update', $post)
                             <a class="btn-outline-primary btn"
-                               href="
-                               @if(auth()->check() and auth()->user()->isAdmin())
-                                   {{ route('admin.posts.edit', ['post' => $post->getRouteKey()]) }}
-                               @else
-                                   {{ route('posts.edit', ['post' => $post->getRouteKey()]) }}
-                               @endif">Изменить</a>
-                            {{-- href="@editPost($post->slug)">Изменить</a>--}}
+                               href="@editPost($post->getRouteKey())">Изменить</a>
                         @endcan
 
                         @auth
