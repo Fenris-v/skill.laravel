@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Post;
+use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -12,16 +14,9 @@ class UsersSeeder extends Seeder
      */
     public function run()
     {
-        $users = [
-            [
-                'name' => 'Just User',
-                'email' => 'test@gmail.com',
-                'password' => '$2y$10$AHIg2LBWiSlu7jrHakquqO6XIg4btsAXET41quUTFaoxsmPwBXuKe' // 'password'
-            ]
-        ];
-
-        foreach ($users as $user) {
-            User::create($user);
-        }
+        User::factory()
+            ->count(2)
+            ->hasPosts(10)
+            ->create();
     }
 }

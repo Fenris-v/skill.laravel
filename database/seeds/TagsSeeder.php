@@ -2,7 +2,6 @@
 
 use App\Models\Tag;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 
 class TagsSeeder extends Seeder
 {
@@ -13,13 +12,8 @@ class TagsSeeder extends Seeder
      */
     public function run()
     {
-        $items = [
-            ['name' => 'История', 'slug' => Str::slug('История')],
-            ['name' => 'Литература', 'slug' => Str::slug('Литература')]
-        ];
-
-        foreach ($items as $item) {
-            Tag::create($item);
-        }
+        Tag::factory()
+            ->count(10)
+            ->create();
     }
 }

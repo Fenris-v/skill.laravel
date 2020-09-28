@@ -1,5 +1,5 @@
 @php
-    $canEditSlug = $canEditSlug ?? false;
+    $canEditSlug = $canEditSlug ?? false
 @endphp
 
 @csrf

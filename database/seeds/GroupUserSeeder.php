@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -12,13 +13,8 @@ class GroupUserSeeder extends Seeder
      */
     public function run()
     {
-        $items = [
-            ['user_id' => 1, 'group_id' => 2],
-            ['user_id' => 2, 'group_id' => 2]
-        ];
-
-        foreach ($items as $item) {
-            DB::table('group_user')->insert($item);
+        foreach (User::all() as $user) {
+            $user->groups()->attach(2);
         }
     }
 }

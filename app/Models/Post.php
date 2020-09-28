@@ -6,8 +6,10 @@ use App\Events\PostCreated;
 use App\Events\PostEdited;
 use App\Events\PostRemoved;
 use App\Events\PostUnpublished;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Carbon\Carbon;
 
 use Spatie\Sluggable\HasSlug;
 
@@ -15,6 +17,7 @@ use Spatie\Sluggable\SlugOptions;
 
 class Post extends Model
 {
+    use HasFactory;
     use HasSlug;
 
     protected $dispatchesEvents = [
@@ -73,6 +76,16 @@ class Post extends Model
     public function scopeUnpublishedPosts($query)
     {
         return $query->where('published', 0);
+    }
+
+    /**
+     * Посты за последнюю неделю
+     * @param $query
+     * @return mixed
+     */
+    public function scopeWeeklyPosts($query)
+    {
+        return $query->where('created_at', '>', Carbon::now()->subWeek());
     }
 
     /**

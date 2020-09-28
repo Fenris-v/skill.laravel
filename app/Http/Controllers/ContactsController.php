@@ -3,23 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Callback;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Redirector;
+use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 
 class ContactsController extends Controller
 {
     /**
-     * Станица для админа, где выводятся все заявки
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    public function index()
-    {
-        $callbacks = Callback::latest()->get();
-
-        return view('contacts.admin', compact('callbacks'));
-    }
-
-    /**
      * Возвращает отображение страницы контактов
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return Application|Factory|View
      */
     public function create()
     {
@@ -28,8 +23,8 @@ class ContactsController extends Controller
 
     /**
      * Сохраняет заявку
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     * @throws \Illuminate\Validation\ValidationException
+     * @return Application|RedirectResponse|Redirector
+     * @throws ValidationException
      */
     public function store()
     {

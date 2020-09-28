@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Notifications\PostPublished;
 use App\Models\Post;
+use App\Notifications\PostPublished;
+use Illuminate\Http\RedirectResponse;
 
 /**
  * Контроллер для публикации постов
@@ -20,7 +21,7 @@ class PublishedPostsController extends Controller
     /**
      * Публикует статью
      * @param Post $post
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function store(Post $post)
     {
@@ -37,7 +38,7 @@ class PublishedPostsController extends Controller
     /**
      * Снимает статью с публикации
      * @param Post $post
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function destroy(Post $post)
     {

@@ -3,7 +3,6 @@
 @section('title', $post->title)
 
 @section('content')
-
     <main role="main" class="container">
         <div class="row">
             <div class="col-md-8 blog-main">
@@ -11,36 +10,45 @@
                     <h2 class="blog-post-title">{{ $post->title }}
                         @can('update', $post)
                             <a class="btn-outline-primary btn"
-                               href="{{ route('posts.edit', ['post' => $post->getRouteKey()]) }}">Изменить</a>
+                               href="@editPost($post->getRouteKey())">Изменить</a>
                         @endcan
 
-                        @if(Auth::user() && Auth::user()->isAdmin())
-                            <a class="btn {{ $post->published ? 'btn-outline-danger' : 'btn-outline-secondary' }}"
-                               id="publishing"
-                               href="#">{{ $post->published ? 'Снять с публикации' : 'Опубликовать' }}</a>
+                        @auth
+                            @if(Auth::user()->isAdmin())
+                                <a class="btn {{ $post->published ? 'btn-outline-danger' : 'btn-outline-secondary' }}"
+                                   id="publishing"
+                                   href="#">{{ $post->published ? 'Снять с публикации' : 'Опубликовать' }}</a>
 
-                            <form id="publishing-form" action="{{ route('posts.publishing', $post->getRouteKey()) }}" method="POST"
-                                  class="d-none">
-                                @csrf
+                                <form id="publishing-form"
+                                      action="{{ route('posts.publishing', $post->getRouteKey()) }}"
+                                      method="POST"
+                                      class="d-none">
+                                    @csrf
 
-                                @if($post->published)
-                                    @method('DELETE')
-                                @endif
-                            </form>
-                        @endif
+                                    @if($post->published)
+                                        @method('DELETE')
+                                    @endif
+                                </form>
+                            @endif
+                        @endauth
                     </h2>
                     <p class="blog-post-meta">{{ $post->created_at->isoFormat('D MMM YYYY') }}</p>
 
                     @include('posts.tags', ['tags' => $post->tags])
 
-                    {!! $post->text !!}
+                    <div class="mb-3">
+                        <div class="float-right w-50">
+                            <img class="w-100 pl-2 pb-2" src="{{ $post->image ?? '' }}" alt="image">
+                        </div>
+                        {!! $post->text !!}
+                    </div>
                     <a class="btn btn-primary" href="{{ route('posts.index') }}">Вернуться</a>
                 </div>
             </div>
 
             @include('layout.side')
 
-        </div><!-- /.row -->
+        </div>
 
-    </main><!-- /.container -->
+    </main>
 @endsection

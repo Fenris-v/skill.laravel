@@ -29,6 +29,10 @@
                 </a>
 
                 <div class="dropdown-menu dropdown-menu-right py-0" aria-labelledby="navbarDropdown">
+                    @if(Auth::user()->isAdmin())
+                        <a class="dropdown-item py-2" href="{{ route('admin') }}">{{ __('admin.panel') }}</a>
+                    @endif
+
                     <a id="dropdownLogout" class="dropdown-item py-2" href="{{ route('logout') }}">
                         {{ __('auth.logout') }}
                     </a>
@@ -49,9 +53,5 @@
         <a class="p-2 text-muted" href="{{ route('about') }}">О нас</a>
         <a class="p-2 text-muted" href="{{ route('contacts') }}">Контакты</a>
         <a class="p-2 text-muted" href="{{ route('posts.create') }}">Создать статью</a>
-        @if(Auth::user() && Auth::user()->isAdmin())
-            <a class="p-2 text-muted" href="{{ route('posts.unpublished') }}">Неопубликованные статьи</a>
-            <a class="p-2 text-muted" href="{{ route('callbacks.list') }}">Админ</a>
-        @endif
     </nav>
 </div>

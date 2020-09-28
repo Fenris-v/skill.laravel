@@ -67,7 +67,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Europe/Moscow',
 
     /*
     |--------------------------------------------------------------------------
@@ -175,7 +175,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\TelescopeServiceProvider::class,
-
+        App\Providers\PushAllServiceProvider::class
     ],
 
     /*
@@ -229,5 +229,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
 
     ],
+
+    'slack_link' => env('SLACK_LINK', null)
 
 ];

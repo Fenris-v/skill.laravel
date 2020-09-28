@@ -25,11 +25,12 @@ class PostPolicy
     /**
      * Политика отвечающая за то, чтобы только админ мог просматривать неопубликованные посты.
      *
-     * @param User $user
+     * @param User|null $user
+     * @param Post $post
      * @return bool
      */
-    public function showPost(User $user)
+    public function showPost(?User $user, Post $post)
     {
-        return $user->isAdmin();
+        return optional($user)->isAdmin() || $post->published;
     }
 }

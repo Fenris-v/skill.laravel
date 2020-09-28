@@ -3,7 +3,6 @@
 namespace App\Listeners;
 
 use App\Events\PostCreated;
-use App\Models\Group;
 use App\Models\User;
 use App\Traits\UserCollectionForMailing;
 use Illuminate\Support\Facades\Notification;
@@ -25,5 +24,7 @@ class SendPostCreatedNotification
         $this->addToUsersIfNotExists($users, $event->post->user);
 
         Notification::send($users, new \App\Notifications\PostCreated($event->post));
+
+        pushall($event->post->title, $event->post->short_desc);
     }
 }
