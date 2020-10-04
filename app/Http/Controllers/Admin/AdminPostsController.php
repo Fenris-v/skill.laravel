@@ -23,11 +23,16 @@ class AdminPostsController extends Controller
      */
     public function index()
     {
-        $posts = Post::all();
+        $items = Post::all()->sortByDesc('created_at');
 
-        return view('admin.posts.index', compact('posts'));
+        return view('admin.posts.index', compact('items'));
     }
 
+    /**
+     * Редактирование поста
+     * @param Post $post
+     * @return Application|Factory|\Illuminate\Contracts\View\View
+     */
     public function edit(Post $post)
     {
         return view('admin.posts.edit', compact('post'));
@@ -39,9 +44,9 @@ class AdminPostsController extends Controller
      */
     public function published()
     {
-        $posts = Post::publishedPosts()->get();
+        $items = Post::publishedPosts()->get();
 
-        return view('admin.posts.index', compact('posts'));
+        return view('admin.posts.index', compact('items'));
     }
 
     /**
@@ -50,8 +55,8 @@ class AdminPostsController extends Controller
      */
     public function unpublished()
     {
-        $posts = Post::unpublishedPosts()->get();
+        $items = Post::unpublishedPosts()->get();
 
-        return view('admin.posts.index', compact('posts'));
+        return view('admin.posts.index', compact('items'));
     }
 }

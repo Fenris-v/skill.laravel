@@ -1,5 +1,7 @@
 <?php
 
+use Database\Seeders\CommentSeeder;
+use Database\Seeders\NewsSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -17,7 +19,9 @@ class DatabaseSeeder extends Seeder
                 TagsSeeder::class,
                 UsersSeeder::class,
                 GroupUserSeeder::class,
-                PostTagSeeder::class
+                NewsSeeder::class,
+                PostTagSeeder::class,
+                CommentSeeder::class
             ]
         );
     }

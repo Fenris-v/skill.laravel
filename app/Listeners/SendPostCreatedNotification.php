@@ -19,12 +19,12 @@ class SendPostCreatedNotification
      */
     public function handle(PostCreated $event)
     {
-        $users = User::admins()->get();
-
-        $this->addToUsersIfNotExists($users, $event->post->user);
-
-        Notification::send($users, new \App\Notifications\PostCreated($event->post));
-
-        pushall($event->post->title, $event->post->short_desc);
+//        $users = User::admins()->get();
+//
+//        $this->addToUsersIfNotExists($users, $event->post->user);
+//
+//        Notification::send($users, new \App\Notifications\PostCreated($event->post));
+//
+//        pushall($event->post->title, $event->post->short_desc);
     }
 }

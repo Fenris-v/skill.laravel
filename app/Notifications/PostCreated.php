@@ -43,10 +43,6 @@ class PostCreated extends Notification
      * @param $notifiable
      * @return SlackMessage
      */
-    // TODO: Прошу прокомментировать интеграцию со слак.
-    // TODO: Сделал, т.к. было интересно и на работе уже был подробный запрос, но не в рамках фреймворков.
-    // TODO: Роутинг для слака в модели User, как в документации.
-    // TODO: Код работает, но может какие-то рекомендации будут
     public function toSlack($notifiable)
     {
         return (new SlackMessage)

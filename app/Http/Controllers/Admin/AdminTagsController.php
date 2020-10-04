@@ -25,8 +25,21 @@ class AdminTagsController extends Controller
      */
     public function index(Tag $tag)
     {
-        $posts = $tag->posts()->latest()->with('tags')->get();
+        $items = $tag->posts()->latest()->with('tags')->get();
 
-        return view('admin.posts.index', compact('posts'));
+        return view('admin.posts.index', compact('items', 'tag'));
+    }
+
+    /**
+     * Статьи по тегам
+     *
+     * @param Tag $tag
+     * @return Application|Factory|Response|View
+     */
+    public function indexNews(Tag $tag)
+    {
+        $items = $tag->news()->latest()->with('tags')->get();
+
+        return view('admin.posts.index', compact('items', 'tag'));
     }
 }

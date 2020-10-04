@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\News;
 use App\Models\Post;
 use App\Models\Tag;
 use Illuminate\Database\Seeder;
@@ -19,13 +20,26 @@ class PostTagSeeder extends Seeder
         }
 
         foreach (Post::all() as $post) {
-            $keyTags = array_rand($tagsId, rand(1, 4));
-
-            $keyTags = is_array($keyTags) ? $keyTags : [$keyTags];
+            $keyTags = $this->getRandomTags($tagsId);
 
             foreach ($keyTags as $key) {
                 $post->tags()->attach($tagsId[$key]);
             }
         }
+
+        foreach (News::all() as $news) {
+            $keyTags = $this->getRandomTags($tagsId);
+
+            foreach ($keyTags as $key) {
+                $news->tags()->attach($tagsId[$key]);
+            }
+        }
+    }
+
+    private function getRandomTags($tagsId): array
+    {
+        $keyTags = array_rand($tagsId, rand(1, 4));
+
+        return is_array($keyTags) ? $keyTags : [$keyTags];
     }
 }

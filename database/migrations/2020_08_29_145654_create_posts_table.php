@@ -22,7 +22,9 @@ class CreatePostsTable extends Migration
             $table->string('image')->nullable();
             $table->unsignedInteger('user_id')->nullable();
             $table->boolean('published')->default(false);
+            $table->softDeletes();
             $table->timestamps();
+            $table->text('history')->nullable();
 
             $table->foreign('user_id')
                 ->references('id')

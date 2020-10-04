@@ -70,9 +70,16 @@ class User extends Authenticatable
      * Проверяет является ли текущий пользователь админом
      * @return bool
      */
+    // TODO: При переходе на страницу просмотра статьи я несколько раз проверяю, является ли пользователь админом.
+    // TODO: При каждом обращении к методу создается новый запрос к БД и это кажется жутко не оптимизированным.
+    // TODO: В одной из прошлых версий я делал этот метод статическим, но вы сделали замечание по этому поводу.
+    // TODO: Можно всё таки как-то оптимизировать это?
+    // TODO: Приложу ссылку на скриншот из дебагера, там также будет виден Backtrace:
+    // TODO: https://i.imgur.com/Bzy90YF.png
+    // TODO: В итоге целых 5 одинаковых запросов к БД имею на этой странице
     public function isAdmin(): bool
     {
-        return $this->groups()->where('id', Group::ADMIN_ID)->exists();
+        return $this->with('groups')->where('id', Group::ADMIN_ID)->exists();
     }
 
     /**
@@ -97,5 +104,14 @@ class User extends Authenticatable
                 $query->where('id', Group::ADMIN_ID);
             }
         );
+    }
+
+    /**
+     * Привязка к комментариям
+     * @return BelongsToMany
+     */
+    public function comments()
+    {
+        return $this->belongsToMany(Comment::class);
     }
 }

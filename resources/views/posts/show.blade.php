@@ -44,6 +44,18 @@
                     </div>
                     <a class="btn btn-primary" href="{{ route('posts.index') }}">Вернуться</a>
                 </div>
+
+                @auth
+                    @include('comments.create', ['type' => 'post', 'slug' => $post->slug, 'class' => App\Models\Post::class])
+                @else
+                    <div class="text-secondary">
+                        Авторизуйтесь, чтобы оставить комментарий
+                    </div>
+                @endauth
+
+                @if($comments->count() > 0)
+                    @include('comments.show', ['comments' => $comments])
+                @endif
             </div>
 
             @include('layout.side')
