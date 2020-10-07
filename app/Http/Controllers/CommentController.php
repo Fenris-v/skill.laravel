@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CommentForm;
-use App\Models\Comment;
 use App\Models\News;
 use App\Models\Post;
+use App\Service\SaveComment;
 use Illuminate\Http\RedirectResponse;
 
 class CommentController extends Controller
@@ -21,9 +21,7 @@ class CommentController extends Controller
     {
         $validate = $request->validated();
 
-        $validate['user_id'] = auth()->id();
-
-        $post->comments()->save(new Comment($validate));
+        app(SaveComment::class)->saveComment($post, $validate);
 
         return back();
     }
@@ -39,9 +37,7 @@ class CommentController extends Controller
     {
         $validate = $request->validated();
 
-        $validate['user_id'] = auth()->id();
-
-        $news->comments()->save(new Comment($validate));
+        app(SaveComment::class)->saveComment($news, $validate);
 
         return back();
     }

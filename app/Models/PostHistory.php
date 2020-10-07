@@ -7,9 +7,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PostHistory extends Model
 {
-//    protected $fillable = ['before', 'after'];
+    protected $fillable = ['before', 'after'];
 
-    protected $guarded = [];
+    /**
+     * Преобразует данные к массиву
+     * @var string[]
+     */
+    protected $casts = [
+        'before' => 'array',
+        'after' => 'array',
+    ];
 
     /**
      * Связь с пользователем

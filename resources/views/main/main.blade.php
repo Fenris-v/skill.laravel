@@ -4,8 +4,8 @@
         Список постов
     </h3>
 
-    @each('posts.item', $items, 'post')
+    @each('posts.item', $items, 'item')
 
-{{--    {{ $items->onEachSide(1)->links() }}--}}
+    {{ $items->onEachSide(1)->links() }}
 
 </div>

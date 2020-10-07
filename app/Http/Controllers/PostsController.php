@@ -100,6 +100,8 @@ class PostsController extends Controller
     {
         $this->authorize('update', $post);
 
+        $post->load('history');
+
         return view('posts.edit', compact('post'));
     }
 
@@ -133,7 +135,7 @@ class PostsController extends Controller
 
         flash('Пост успешно изменен', 'success');
 
-        return redirect(route('posts.show', $post->getRouteKey()));
+        return back();
     }
 
     /**

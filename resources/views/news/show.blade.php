@@ -19,16 +19,14 @@
                 </div>
 
                 @auth
-                    @include('comments.create', ['type' => 'news', 'slug' => $news->slug, 'class' => App\Models\News::class])
+                    <form action="{{ route("comment.store.news", $news->slug) }}" method="POST">
+                        @include('comments.create')
+                    </form>
                 @else
-                    <div class="text-secondary">
-                        Авторизуйтесь, чтобы оставить комментарий
-                    </div>
+                    @include('comments.auth')
                 @endauth
 
-                @if($comments->count() > 0)
-                    @include('comments.show', ['comments' => $comments])
-                @endif
+                @include('comments.show')
             </div>
 
             @include('layout.side')

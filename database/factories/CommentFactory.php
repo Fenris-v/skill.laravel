@@ -24,7 +24,7 @@ class CommentFactory extends Factory
     {
         return [
             'text' => $this->faker->realText($this->faker->numberBetween(200, 500)),
-            'user_id' => $this->faker->numberBetween(2, 3)
+            'user_id' => User::all()->shuffle()->first()->id
         ];
     }
 }

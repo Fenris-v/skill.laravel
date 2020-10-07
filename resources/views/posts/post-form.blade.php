@@ -52,7 +52,7 @@
 <div class="form-group">
     @include('posts.edit-tags')
 </div>
-@if($type !== 'news')
+@if($post instanceof App\Models\Post)
     <div class="form-group form-check">
         <input
             @if (old('published') === 'on' || (!old('published') && $post->published))

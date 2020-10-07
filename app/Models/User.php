@@ -43,6 +43,15 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    protected $appends = [
+        'admin'
+    ];
+
+    /**
+     * Роутинг для slack
+     * @param $notification
+     * @return \Illuminate\Config\Repository|\Illuminate\Contracts\Foundation\Application|mixed
+     */
     public function routeNotificationForSlack($notification)
     {
         return config('app.slack_link');
@@ -67,19 +76,26 @@ class User extends Authenticatable
     }
 
     /**
+     * Создает вычисляемое поле admin
+     * @param $value
+     * @return mixed
+     */
+    public function getAdminAttribute($value)
+    {
+        return $value;
+    }
+
+    /**
      * Проверяет является ли текущий пользователь админом
      * @return bool
      */
-    // TODO: При переходе на страницу просмотра статьи я несколько раз проверяю, является ли пользователь админом.
-    // TODO: При каждом обращении к методу создается новый запрос к БД и это кажется жутко не оптимизированным.
-    // TODO: В одной из прошлых версий я делал этот метод статическим, но вы сделали замечание по этому поводу.
-    // TODO: Можно всё таки как-то оптимизировать это?
-    // TODO: Приложу ссылку на скриншот из дебагера, там также будет виден Backtrace:
-    // TODO: https://i.imgur.com/Bzy90YF.png
-    // TODO: В итоге целых 5 одинаковых запросов к БД имею на этой странице
     public function isAdmin(): bool
     {
-        return $this->with('groups')->where('id', Group::ADMIN_ID)->exists();
+        if ($this->admin === null) {
+            $this->admin = $this->groups()->where('id', Group::ADMIN_ID)->exists();
+        }
+
+        return $this->admin;
     }
 
     /**

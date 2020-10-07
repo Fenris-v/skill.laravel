@@ -75,8 +75,7 @@ class AdminNewsController extends Controller
      */
     public function edit(News $news)
     {
-        $post = $news;
-        return view('admin.posts.edit', compact('post'));
+        return view('admin.news.edit', compact('news'));
     }
 
     /**

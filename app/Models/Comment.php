@@ -11,9 +11,6 @@ class Comment extends Model
 {
     use HasFactory;
 
-    const POST_TYPE = Post::class;
-    const NEWS_TYPE = News::class;
-
     protected $fillable = ['text', 'user_id'];
 
     /**

@@ -6,8 +6,10 @@ use App\Events\PostCreated;
 use App\Events\PostEdited;
 use App\Events\PostRemoved;
 use App\Events\PostUnpublished;
+use App\HistoryPivot;
 use App\Traits\HasComments;
 use App\Traits\HasTag;
+use App\Traits\SyncTags;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -25,6 +27,7 @@ class Post extends Model
     use SoftDeletes;
     use HasTag;
     use HasComments;
+    use SyncTags;
 
     /** События */
     protected $dispatchesEvents = [
@@ -43,7 +46,6 @@ class Post extends Model
     /** Преобразовать значение к типу */
     protected $casts = [
         'published' => 'boolean',
-        'history' => 'array'
     ];
 
     protected static function boot()
@@ -71,11 +73,8 @@ class Post extends Model
                 $post->history()->attach(
                     auth()->id(),
                     [
-                        'before' => json_encode(
-                            Arr::only($post->fresh()->toArray(), array_keys($after)),
-                            JSON_UNESCAPED_UNICODE
-                        ),
-                        'after' => json_encode($after, JSON_UNESCAPED_UNICODE)
+                        'before' => Arr::only($post->fresh()->toArray(), array_keys($after)),
+                        'after' => $after
                     ]
                 );
             }
@@ -149,33 +148,6 @@ class Post extends Model
     }
 
     /**
-     * Изменяет теги поста
-     * @param Post $post
-     */
-    public function syncTags(Post $post)
-    {
-        $tags = collect(request('tags'))->keyBy(
-            function ($item) {
-                return $item;
-            }
-        );
-
-        $syncIds = [];
-
-        foreach ($tags as $tag) {
-            $tagObj = Tag::where('name', $tag)->first();
-
-            if (!$tagObj) {
-                $tagObj = Tag::create(['name' => $tag]);
-            }
-
-            $syncIds[] = $tagObj->id;
-        }
-
-        $post->tags()->sync($syncIds);
-    }
-
-    /**
      * Создает slug
      * @return SlugOptions
      */
@@ -203,6 +175,6 @@ class Post extends Model
     public function history()
     {
         return $this->belongsToMany(User::class, 'post_histories')
-            ->withPivot(['after', 'before'])->withTimestamps();
+            ->withPivot(['after', 'before'])->using(HistoryPivot::class)->withTimestamps();
     }
 }

@@ -5,23 +5,20 @@ namespace App\Http\Controllers;
 use App\Models\Tag;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\View\View;
+use Request;
 
 class TagsController extends Controller
 {
     /**
      * Страница статей по тегу
      * @param Tag $tag
+     * @param Request $request
      * @return Application|Factory|View
      */
-    // TODO: Есть ли иной способ загрузить сразу все модели связанные с тегом, а не только указанные?
-    public function index(Tag $tag)
+    public function index(Tag $tag, Request  $request)
     {
-        // TODO: Этот код довольно странным кажется.
-        // TODO: Я получаю 2 коллекции, затем их нужно объединить, для этого создать новую,
-        // TODO: пройти циклом, после отсортировать.
-        // TODO: Кажется что много лишних действий, но я не нашел способа получить модели сразу в одну коллекцию.
-        // TODO: Если есть более оптимальный способ, прошу подсказать.
         $relations = $tag->load(
             [
                 'news' => function ($query) {
@@ -39,6 +36,18 @@ class TagsController extends Controller
         }
 
         $items = $items->sortByDesc('created_at');
+
+        // TODO: Просьба прокомментировать пагинацию по моделям, всё ли правильно? Можно как-то улучшить?
+        // TODO: Довольно странно выбирать всё, а потом пагинировать конечно,
+        // TODO: но не вижу других вариантов с учетом логики, что выбирается из нескольких таблиц,
+        // TODO: потом сортирует и после этого пагинируется.
+        $items = new LengthAwarePaginator(
+            $items->forPage(request()->page, 10),
+            $items->count(),
+            10,
+            request()->page,
+            ['path' => route('posts.tag', $tag->slug)]
+        );
 
         return view('main.index', compact('items'));
     }

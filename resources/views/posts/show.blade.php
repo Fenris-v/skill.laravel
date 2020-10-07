@@ -46,11 +46,11 @@
                 </div>
 
                 @auth
-                    @include('comments.create', ['type' => 'post', 'slug' => $post->slug, 'class' => App\Models\Post::class])
+                    <form action="{{ route("comment.store.post", $post->slug) }}" method="POST">
+                        @include('comments.create')
+                    </form>
                 @else
-                    <div class="text-secondary">
-                        Авторизуйтесь, чтобы оставить комментарий
-                    </div>
+                    @include('comments.auth')
                 @endauth
 
                 @if($comments->count() > 0)

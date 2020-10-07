@@ -16,6 +16,7 @@ class NewsSeeder extends Seeder
     {
         News::factory()
             ->count(50)
+            ->hasComments(rand(1, 5))
             ->create();
     }
 }
