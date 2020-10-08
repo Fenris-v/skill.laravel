@@ -6,7 +6,6 @@ use App\Events\PostCreated;
 use App\Events\PostEdited;
 use App\Events\PostRemoved;
 use App\Events\PostUnpublished;
-use App\HistoryPivot;
 use App\Traits\HasComments;
 use App\Traits\HasTag;
 use App\Traits\SyncTags;

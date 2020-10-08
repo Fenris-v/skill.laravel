@@ -10,6 +10,13 @@ use Illuminate\Http\RedirectResponse;
 
 class CommentController extends Controller
 {
+    private SaveComment $saveComment;
+
+    public function __construct(SaveComment $saveComment)
+    {
+        $this->saveComment = $saveComment;
+    }
+
     /**
      * Добавляет комментарий к посту
      *
@@ -21,7 +28,7 @@ class CommentController extends Controller
     {
         $validate = $request->validated();
 
-        app(SaveComment::class)->saveComment($post, $validate);
+        $this->saveComment->saveComment($post, $validate);
 
         return back();
     }
@@ -37,7 +44,7 @@ class CommentController extends Controller
     {
         $validate = $request->validated();
 
-        app(SaveComment::class)->saveComment($news, $validate);
+        $this->saveComment->saveComment($news, $validate);
 
         return back();
     }

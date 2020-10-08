@@ -6,6 +6,8 @@
 
     @each('posts.item', $items, 'item')
 
-    {{ $items->onEachSide(1)->links() }}
+    @if(url()->current() !== route('posts.tag', $tag ?? ''))
+        {{ $items->onEachSide(1)->links() }}
+    @endif
 
 </div>

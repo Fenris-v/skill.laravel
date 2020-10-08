@@ -47,7 +47,7 @@ class AppServiceProvider extends ServiceProvider
         Blade::directive(
             'editPost',
             function ($expression) {
-                return "<?= route(Auth::check() && Auth::user()->isAdmin() ? 'admin.posts.edit' : 'posts.edit', ['post' => $expression]); ?>";
+                return "<?= route(Auth::check() && Auth::user()->getIsAdminAttribute() ? 'admin.posts.edit' : 'posts.edit', ['post' => $expression]); ?>";
             }
         );
 

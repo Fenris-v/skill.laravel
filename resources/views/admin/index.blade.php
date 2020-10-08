@@ -10,10 +10,10 @@
     <p class="h2">Всего новостей на сайте: {{ $statistic['news'] }}</p>
     <p class="h2">Самый публикуемый автор: {{  $statistic['mostPublishingUser']->name }}</p>
     <p class="h2">Зарегистрированных пользователей: {{ $statistic['allUsersCount'] }}</p>
-    <p class="h2">Самый короткий пост: {{ $statistic['mostLongPost']->title . '. Длина: '
-        . mb_strlen($statistic['mostLongPost']->text) . ' символов' }}</p>
-    <p class="h2">Самый длинный пост: {{ $statistic['mostShortPost']->title . '. Длина: '
+    <p class="h2">Самый короткий пост: {{ $statistic['mostShortPost']->title . '. Длина: '
         . mb_strlen($statistic['mostShortPost']->text) . ' символов' }}</p>
+    <p class="h2">Самый длинный пост: {{ $statistic['mostLongPost']->title . '. Длина: '
+        . mb_strlen($statistic['mostLongPost']->text) . ' символов' }}</p>
     <p class="h2">Самый комментируемый
         пост: {{ $statistic['mostCommentingPost']->title ?? 'Комментариев не найдено' }}</p>
     <p class="h2">Самый редактируемый

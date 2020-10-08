@@ -43,10 +43,6 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    protected $appends = [
-        'admin'
-    ];
-
     /**
      * Роутинг для slack
      * @param $notification
@@ -76,20 +72,10 @@ class User extends Authenticatable
     }
 
     /**
-     * Создает вычисляемое поле admin
-     * @param $value
-     * @return mixed
-     */
-    public function getAdminAttribute($value)
-    {
-        return $value;
-    }
-
-    /**
-     * Проверяет является ли текущий пользователь админом
+     * Создает вычисляемое поле isAdmin
      * @return bool
      */
-    public function isAdmin(): bool
+    public function getIsAdminAttribute(): bool
     {
         if ($this->admin === null) {
             $this->admin = $this->groups()->where('id', Group::ADMIN_ID)->exists();

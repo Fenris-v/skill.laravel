@@ -19,7 +19,7 @@ class PostPolicy
      */
     public function update(User $user, Post $post)
     {
-        return $post->user_id === $user->id || $user->isAdmin();
+        return $post->user_id === $user->id || $user->getIsAdminAttribute();
     }
 
     /**
@@ -31,6 +31,6 @@ class PostPolicy
      */
     public function showPost(?User $user, Post $post)
     {
-        return optional($user)->isAdmin() || $post->published;
+        return optional($user)->getIsAdminAttribute() || $post->published;
     }
 }
