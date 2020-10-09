@@ -17,7 +17,7 @@ class Administrate
      */
     public function handle(Request $request, Closure $next)
     {
-        abort_unless(Auth::user()->getIsAdminAttribute(), 403);
+        abort_unless(Auth::user()->is_admin, 403);
         return $next($request);
     }
 }

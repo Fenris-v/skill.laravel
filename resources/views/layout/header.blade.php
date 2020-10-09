@@ -29,7 +29,7 @@
                 </a>
 
                 <div class="dropdown-menu dropdown-menu-right py-0" aria-labelledby="navbarDropdown">
-                    @if(Auth::user()->getIsAdminAttribute())
+                    @if(Auth::user()->is_admin)
                         <a class="dropdown-item py-2" href="{{ route('admin') }}">{{ __('admin.panel') }}</a>
                     @endif
 

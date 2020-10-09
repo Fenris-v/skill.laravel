@@ -14,7 +14,7 @@
                         @endcan
 
                         @auth
-                            @if(Auth::user()->getIsAdminAttribute())
+                            @if(Auth::user()->is_admin)
                                 <a class="btn {{ $post->published ? 'btn-outline-danger' : 'btn-outline-secondary' }}"
                                    id="publishing"
                                    href="#">{{ $post->published ? 'Снять с публикации' : 'Опубликовать' }}</a>
