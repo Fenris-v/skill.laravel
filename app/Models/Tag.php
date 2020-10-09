@@ -25,11 +25,19 @@ class Tag extends Model
     }
 
     /**
-     * Посты по тегу
+     * Привязка постов к тегам
      */
     public function posts()
     {
-        return $this->belongsToMany(Post::class);
+        return $this->morphedByMany(Post::class, 'taggable');
+    }
+
+    /**
+     * Привязка новостей к тегам
+     */
+    public function news()
+    {
+        return $this->morphedByMany(News::class, 'taggable');
     }
 
     /**
@@ -38,7 +46,7 @@ class Tag extends Model
      */
     public static function tagsCloud()
     {
-        return (new static)->has('posts')->get();
+        return (new static)->has('posts')->orWhereHas('news')->get();
     }
 
     /**

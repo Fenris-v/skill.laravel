@@ -1,7 +1,8 @@
 <?php
 
+use App\Events\PostCreated;
+use App\Models\Comment;
 use App\Models\Post;
-use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -14,9 +15,15 @@ class UsersSeeder extends Seeder
      */
     public function run()
     {
+        Event::forget(PostCreated::class);
         User::factory()
             ->count(2)
-            ->hasPosts(10)
+            ->has(
+                Post::factory()
+                    ->count(rand(10, 20))
+                    ->has(Comment::factory()->count(rand(1, 5)), 'comments'),
+                'posts'
+            )
             ->create();
     }
 }

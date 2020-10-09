@@ -10,8 +10,14 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link {{ url()->current() === route('admin.posts.index') ? 'active' : '' }}" href="{{ route('admin.posts.index') }}">
-                    <i class="far fa-newspaper"></i>
+                    <i class="fas fa-book"></i>
                     Статьи
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ url()->current() === route('admin.news.index') ? 'active' : '' }}" href="{{ route('admin.news.index') }}">
+                    <i class="far fa-newspaper"></i>
+                    Новости
                 </a>
             </li>
             <li class="nav-item">

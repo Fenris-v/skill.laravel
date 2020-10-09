@@ -14,7 +14,7 @@
                         @endcan
 
                         @auth
-                            @if(Auth::user()->isAdmin())
+                            @if(Auth::user()->is_admin)
                                 <a class="btn {{ $post->published ? 'btn-outline-danger' : 'btn-outline-secondary' }}"
                                    id="publishing"
                                    href="#">{{ $post->published ? 'Снять с публикации' : 'Опубликовать' }}</a>
@@ -44,6 +44,18 @@
                     </div>
                     <a class="btn btn-primary" href="{{ route('posts.index') }}">Вернуться</a>
                 </div>
+
+                @auth
+                    <form action="{{ route("comment.store.post", $post->slug) }}" method="POST">
+                        @include('comments.create')
+                    </form>
+                @else
+                    @include('comments.auth')
+                @endauth
+
+                @if($comments->count() > 0)
+                    @include('comments.show', ['comments' => $comments])
+                @endif
             </div>
 
             @include('layout.side')

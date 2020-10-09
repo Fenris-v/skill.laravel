@@ -1,5 +1,6 @@
 @php
-    $canEditSlug = $canEditSlug ?? false
+    $canEditSlug = $canEditSlug ?? false;
+    $type = $type ?? '';
 @endphp
 
 @csrf
@@ -51,11 +52,13 @@
 <div class="form-group">
     @include('posts.edit-tags')
 </div>
-<div class="form-group form-check">
-    <input
-        @if (old('published') === 'on' || (!old('published') && $post->published))
+@if($post instanceof App\Models\Post)
+    <div class="form-group form-check">
+        <input
+            @if (old('published') === 'on' || (!old('published') && $post->published))
             checked
-        @endif
-        type="checkbox" class="form-check-input" id="published" name="published">
-    <label class="form-check-label" for="published">Опубликовано</label>
-</div>
+            @endif
+            type="checkbox" class="form-check-input" id="published" name="published">
+        <label class="form-check-label" for="published">Опубликовано</label>
+    </div>
+@endif

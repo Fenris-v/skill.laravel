@@ -43,6 +43,11 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    /**
+     * Роутинг для slack
+     * @param $notification
+     * @return \Illuminate\Config\Repository|\Illuminate\Contracts\Foundation\Application|mixed
+     */
     public function routeNotificationForSlack($notification)
     {
         return config('app.slack_link');
@@ -67,12 +72,16 @@ class User extends Authenticatable
     }
 
     /**
-     * Проверяет является ли текущий пользователь админом
+     * Создает вычисляемое поле isAdmin
      * @return bool
      */
-    public function isAdmin(): bool
+    public function getIsAdminAttribute(): bool
     {
-        return $this->groups()->where('id', Group::ADMIN_ID)->exists();
+        if ($this->admin === null) {
+            $this->admin = $this->groups()->where('id', Group::ADMIN_ID)->exists();
+        }
+
+        return $this->admin;
     }
 
     /**
@@ -97,5 +106,14 @@ class User extends Authenticatable
                 $query->where('id', Group::ADMIN_ID);
             }
         );
+    }
+
+    /**
+     * Привязка к комментариям
+     * @return BelongsToMany
+     */
+    public function comments()
+    {
+        return $this->belongsToMany(Comment::class);
     }
 }

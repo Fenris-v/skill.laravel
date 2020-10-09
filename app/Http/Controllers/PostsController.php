@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PostForm;
 use App\Models\Post;
-use Auth;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Foundation\Application;
@@ -32,13 +31,13 @@ class PostsController extends Controller
      */
     public function index()
     {
-        $posts = Post::publishedPosts()
+        $items = Post::publishedPosts()
             ->with('tags')
             ->with('user')
             ->latest()
-            ->get();
+            ->paginate(5);
 
-        return view('main.index', compact('posts'));
+        return view('main.index', compact('items'));
     }
 
     /**
@@ -52,7 +51,9 @@ class PostsController extends Controller
     {
         $this->authorize('showPost', $post);
 
-        return view('posts.show', compact('post'));
+        $comments = $post->comments()->with('user')->latest()->get();
+
+        return view('posts.show', compact('post', 'comments'));
     }
 
     /**
@@ -99,6 +100,8 @@ class PostsController extends Controller
     {
         $this->authorize('update', $post);
 
+        $post->load('history');
+
         return view('posts.edit', compact('post'));
     }
 
@@ -132,7 +135,7 @@ class PostsController extends Controller
 
         flash('Пост успешно изменен', 'success');
 
-        return redirect(route('posts.show', $post->getRouteKey()));
+        return back();
     }
 
     /**

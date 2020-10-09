@@ -16,8 +16,24 @@ class TagsController extends Controller
      */
     public function index(Tag $tag)
     {
-        $posts = $tag->posts()->publishedPosts()->latest()->with('tags')->get();
+        $relations = $tag->load(
+            [
+                'news' => function ($query) {
+                    $query->with('tags');
+                },
+                'posts' => function ($query) {
+                    $query->with('tags', 'user');
+                }
+            ]
+        )->getRelations();
 
-        return view('main.index', compact('posts'));
+        $items = collect();
+        foreach ($relations as $relation) {
+            $items = $items->merge($relation);
+        }
+
+        $items = $items->sortByDesc('created_at');
+
+        return view('main.index', compact('items', 'tag'));
     }
 }

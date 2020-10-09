@@ -31,7 +31,7 @@
 
             @include('layout.side')
 
-        </div><!-- /.row -->
+        </div>
 
-    </main><!-- /.container -->
+    </main>
 @endsection

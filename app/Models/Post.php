@@ -6,20 +6,29 @@ use App\Events\PostCreated;
 use App\Events\PostEdited;
 use App\Events\PostRemoved;
 use App\Events\PostUnpublished;
+use App\Traits\HasComments;
+use App\Traits\HasTag;
+use App\Traits\SyncTags;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Carbon\Carbon;
-
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Arr;
 use Spatie\Sluggable\HasSlug;
-
 use Spatie\Sluggable\SlugOptions;
 
 class Post extends Model
 {
     use HasFactory;
     use HasSlug;
+    use SoftDeletes;
+    use HasTag;
+    use HasComments;
+    use SyncTags;
 
+    /** События */
     protected $dispatchesEvents = [
         'created' => PostCreated::class,
         'deleted' => PostRemoved::class
@@ -27,6 +36,16 @@ class Post extends Model
 
     /** Разрешенные для массового заполнения поля */
     protected $fillable = ['title', 'slug', 'short_desc', 'text', 'published', 'user_id'];
+
+    /** Дополнительные поля для метода toArray() */
+    protected $appends = [
+        'text_length'
+    ];
+
+    /** Преобразовать значение к типу */
+    protected $casts = [
+        'published' => 'boolean',
+    ];
 
     protected static function boot()
     {
@@ -44,6 +63,19 @@ class Post extends Model
                 } elseif ($updatedFields->get('published') === 'on') {
                     event(new PostEdited($post));
                 }
+            }
+        );
+
+        static::updating(
+            function (Post $post) {
+                $after = $post->getDirty();
+                $post->history()->attach(
+                    auth()->id(),
+                    [
+                        'before' => Arr::only($post->fresh()->toArray(), array_keys($after)),
+                        'after' => $after
+                    ]
+                );
             }
         );
     }
@@ -115,41 +147,6 @@ class Post extends Model
     }
 
     /**
-     * Теги поста
-     */
-    public function tags()
-    {
-        return $this->belongsToMany(Tag::class);
-    }
-
-    /**
-     * Изменяет теги поста
-     * @param Post $post
-     */
-    public function syncTags(Post $post)
-    {
-        $tags = collect(request('tags'))->keyBy(
-            function ($item) {
-                return $item;
-            }
-        );
-
-        $syncIds = [];
-
-        foreach ($tags as $tag) {
-            $tagObj = Tag::where('name', $tag)->first();
-
-            if (!$tagObj) {
-                $tagObj = Tag::create(['name' => $tag]);
-            }
-
-            $syncIds[] = $tagObj->id;
-        }
-
-        $post->tags()->sync($syncIds);
-    }
-
-    /**
      * Создает slug
      * @return SlugOptions
      */
@@ -159,5 +156,24 @@ class Post extends Model
             ->generateSlugsFrom('title')
             ->saveSlugsTo('slug')
             ->doNotGenerateSlugsOnUpdate();
+    }
+
+    /**
+     * Длина статьи
+     * @return false|int
+     */
+    public function getTextLengthAttribute()
+    {
+        return mb_strlen($this->text);
+    }
+
+    /**
+     * Связь с историей
+     * @return BelongsToMany
+     */
+    public function history()
+    {
+        return $this->belongsToMany(User::class, 'post_histories')
+            ->withPivot(['after', 'before'])->using(HistoryPivot::class)->withTimestamps();
     }
 }

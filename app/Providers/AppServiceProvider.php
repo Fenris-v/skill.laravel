@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Tag;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\View;
@@ -46,8 +47,10 @@ class AppServiceProvider extends ServiceProvider
         Blade::directive(
             'editPost',
             function ($expression) {
-                return "<?= route(Auth::check() && Auth::user()->isAdmin() ? 'admin.posts.edit' : 'posts.edit', ['post' => $expression]); ?>";
+                return "<?= route(Auth::check() && Auth::user()->is_admin ? 'admin.posts.edit' : 'posts.edit', ['post' => $expression]); ?>";
             }
         );
+
+        Paginator::defaultView('pagination::bootstrap-4');
     }
 }
