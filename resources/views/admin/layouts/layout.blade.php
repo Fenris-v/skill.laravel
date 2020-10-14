@@ -17,21 +17,25 @@
 </head>
 
 <body>
+<div id="app">
 
-@if(session()->has('message'))
-    @alert(['type' => session('message_type')])
+    <post-update></post-update>
+
+    @if(session()->has('message'))
+        @alert(['type' => session('message_type')])
         {{ session('message') }}
-    @endalert
-@endif
+        @endalert
+    @endif
 
-@include('admin.layouts.header')
+    @include('admin.layouts.header')
 
-<div class="container-fluid">
-    <div class="row">
-        @include('admin.layouts.sidebar')
+    <div class="container-fluid">
+        <div class="row">
+            @include('admin.layouts.sidebar')
 
-        <div class="p-4 col">
-            @yield('content')
+            <div class="p-4 col">
+                @yield('content')
+            </div>
         </div>
     </div>
 </div>

@@ -5,6 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <title>@yield('title')</title>
 
     <!-- Custom styles for this template -->
@@ -18,7 +20,7 @@
 
 <body>
 
-<div class="container d-flex flex-column min-vh-100 position-relative">
+<div id="app" class="container d-flex flex-column min-vh-100 position-relative">
     @if(session()->has('message'))
         @alert(['type' => session('message_type')])
             {{ session('message') }}
@@ -26,6 +28,8 @@
     @endif
 
     @include('layout.header')
+
+        <post-update></post-update>
 
     @yield('content')
 

@@ -11675,3 +11675,13 @@ h6 {
   max-height: 600px;
 }
 
+.ws-badge {
+  top: 300px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.ws-badge-container {
+  z-index: 1;
+}
+

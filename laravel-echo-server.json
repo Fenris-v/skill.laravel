@@ -1,0 +1,39 @@
+{
+	"authHost": "http://skill.laravel",
+	"authEndpoint": "/broadcasting/auth",
+	"clients": [
+		{
+			"appId": "95f244078b35583f",
+			"key": "5be6b8ce310f8415a8c533ba86f5bf34"
+		}
+	],
+	"database": "redis",
+	"databaseConfig": {
+		"redis": {
+            "keyPrefix": "fenris_laravel_database_"
+        },
+		"sqlite": {
+			"databasePath": "/database/laravel-echo-server.sqlite"
+		}
+	},
+	"devMode": true,
+	"host": null,
+	"port": "6001",
+	"protocol": "http",
+	"socketio": {},
+	"secureOptions": 67108864,
+	"sslCertPath": "",
+	"sslKeyPath": "",
+	"sslCertChainPath": "",
+	"sslPassphrase": "",
+	"subscribers": {
+		"http": true,
+		"redis": true
+	},
+	"apiOriginAllow": {
+		"allowCors": false,
+		"allowOrigin": "",
+		"allowMethods": "",
+		"allowHeaders": ""
+	}
+}

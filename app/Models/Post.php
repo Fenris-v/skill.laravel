@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Events\PostCreated;
 use App\Events\PostEdited;
+use App\Events\PostPublished;
 use App\Events\PostRemoved;
 use App\Events\PostUnpublished;
 use App\Traits\HasComments;
@@ -57,11 +58,11 @@ class Post extends Model
                 $updatedFields = collect($post->getDirty())->forget('updated_at');
 
                 if ($updatedFields->count() > 1 || !$updatedFields->keys()->contains('published')) {
-                    event(new PostEdited($post));
+                    event(new PostEdited($post, array_keys($updatedFields->toArray())));
                 } elseif ($updatedFields->get('published') === false) {
                     event(new PostUnpublished($post));
                 } elseif ($updatedFields->get('published') === 'on') {
-                    event(new PostEdited($post));
+                    event(new PostPublished($post));
                 }
             }
         );

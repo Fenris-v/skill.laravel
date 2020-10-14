@@ -10,12 +10,6 @@ use Illuminate\View\View;
 
 class AdminCallbacksController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-        $this->middleware('admin.panel');
-    }
-
     /**
      * Станица для админа, где выводятся все заявки
      * @return Application|Factory|View

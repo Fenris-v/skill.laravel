@@ -1,23 +1,21 @@
 version: '3.8'
 
 services:
-  webserver:
-    build:
-      context: .
-      dockerfile: .docker/Nginx.Dockerfile
-    ports:
-      - 80:80
-    volumes:
-      - ./:/var/www/laravel
-#    networks:
-#      - app-network
-
-  app:
-    build:
-      context: .
-      dockerfile: .docker/Fpm.Dockerfile
-    volumes:
-      - ./:/var/www/laravel
+#  webserver:
+#    build:
+#      context: .
+#      dockerfile: .docker/Nginx.Dockerfile
+#    ports:
+#      - 80:80
+#    volumes:
+#      - ./:/var/www/laravel
+#
+#  app:
+#    build:
+#      context: .
+#      dockerfile: .docker/Fpm.Dockerfile
+#    volumes:
+#      - ./:/var/www/laravel
 
   postgresql:
     image: "postgres"
@@ -27,15 +25,9 @@ services:
       POSTGRES_DB: laravel
       POSTGRES_USER: fenris
       POSTGRES_PASSWORD: superpassword
-    volumes:
-      - ./dbdata:/var/lib/pgsql
-#    networks:
-#      - app-network
 
-#networks:
-#  app-network:
-#    driver: bridge
+#  redis:
+#    image: "redis"
+#    ports:
+#      - 6379:6379
 
-#volumes:
-#  dbdata:
-#    driver: local

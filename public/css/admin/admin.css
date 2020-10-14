@@ -11631,3 +11631,17 @@ a.text-dark:focus {
   border-color: #5897fb;
 }
 
+.select2-selection {
+  height: 100%;
+}
+
+.ws-badge {
+  top: 300px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.ws-badge-container {
+  z-index: 1;
+}
+

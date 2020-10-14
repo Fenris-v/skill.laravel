@@ -5,11 +5,14 @@ namespace App\Listeners;
 use App\Events\PostCreated;
 use App\Models\User;
 use App\Traits\UserCollectionForMailing;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Notification;
 
-class SendPostCreatedNotification
+class SendPostCreatedNotification implements ShouldQueue
 {
     use UserCollectionForMailing;
+
+    public string $queue = 'notifications';
 
     /**
      * Уведомляет админов и автора о изменении поста

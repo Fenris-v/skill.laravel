@@ -13,12 +13,6 @@ use Illuminate\View\View;
 
 class AdminController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-        $this->middleware('admin.panel');
-    }
-
     /**
      * Рабочий стол
      *
