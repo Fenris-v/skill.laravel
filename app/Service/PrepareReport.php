@@ -2,7 +2,6 @@
 
 namespace App\Service;
 
-use App\Events\ReportRequested;
 use App\Exports\ReportsExport;
 use App\Models\Comment;
 use App\Models\News;
@@ -49,10 +48,6 @@ class PrepareReport
                 $report[1][] = $this->getCount($item);
             }
         }
-
-//        $filename = $this->export($report);
-
-//        event(new ReportRequested(auth()->user()));
 
         return $this->export($report);
     }

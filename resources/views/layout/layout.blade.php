@@ -16,6 +16,10 @@
 
     <!-- Custom styles for this template -->
     <link href="{{ mix('/css/app.css') }}" rel="stylesheet">
+
+    <script>
+        let userId = {{ auth()->id() }}
+    </script>
 </head>
 
 <body>

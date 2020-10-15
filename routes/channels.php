@@ -23,3 +23,7 @@ Broadcast::channel('post', PostChannel::class);
 Broadcast::channel('report.user.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
+
+Broadcast::channel('chat', function ($user) {
+    return ['id', $user->id, 'name' => $user->name];
+});

@@ -33,7 +33,7 @@ class AdminReportsController extends Controller
 
         $userMail = auth()->user()->email;
 
-        Reports::dispatch($whatToReport['get_reports'], $userMail)->onQueue('reports');
+        Reports::dispatch($whatToReport['get_reports'], $userMail, auth()->user())->onQueue('reports');
 
         return view('admin.reports.index');
     }

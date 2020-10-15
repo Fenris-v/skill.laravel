@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\ChatMessage;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\Admin\AdminCallbacksController;
 use App\Http\Controllers\Admin\AdminController;
@@ -75,3 +76,8 @@ Route::middleware(['auth', 'admin.panel'])->prefix('/admin')->group(
         Route::get('export', [AdminReportsController::class, 'export']);
     }
 );
+
+/** Чат */
+Route::post('/chat', function () {
+    broadcast(new ChatMessage(request('message'), auth()->user()))->toOthers();
+})->middleware('auth');
