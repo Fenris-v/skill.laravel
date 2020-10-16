@@ -3,19 +3,16 @@
 namespace App\Service;
 
 use App\Exports\ReportsExport;
-use App\Models\Comment;
-use App\Models\News;
-use App\Models\Post;
-use App\Models\Tag;
-use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Lang;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\Writer\Exception;
 
 class PrepareReport
 {
     private array $toReport;
+    private array $reports;
 
     const ALL_TO_REPORT = 'all';
     const NEWS_TO_REPORT = 'news';
@@ -27,6 +24,13 @@ class PrepareReport
     public function __construct(array $toReport)
     {
         $this->toReport = $toReport;
+        $this->reports = [
+            self::NEWS_TO_REPORT,
+            self::POSTS_TO_REPORT,
+            self::COMMENTS_TO_REPORT,
+            self::TAGS_TO_REPORT,
+            self::USERS_TO_REPORT
+        ];
     }
 
     /**
@@ -40,13 +44,13 @@ class PrepareReport
     {
         $report = [];
 
-        if (in_array(self::ALL_TO_REPORT, $this->toReport)) {
-            $report = $this->allCount();
-        } else {
-            foreach ($this->toReport as $item) {
-                $report[0][] = $this->getColumnName($item);
-                $report[1][] = $this->getCount($item);
+        foreach ($this->reports as $item) {
+            if (!in_array(self::ALL_TO_REPORT, $this->toReport) && !in_array($item, $this->toReport)) {
+                continue;
             }
+
+            $report[0][] = $this->getColumnName($item);
+            $report[1][] = $this->getCount($item);
         }
 
         return $this->export($report);
@@ -60,20 +64,7 @@ class PrepareReport
      */
     private function getColumnName($item): string
     {
-        switch ($item) {
-            case self::NEWS_TO_REPORT:
-                return 'Новости';
-            case self::POSTS_TO_REPORT:
-                return 'Статьи';
-            case self::COMMENTS_TO_REPORT:
-                return 'Комментарии';
-            case self::TAGS_TO_REPORT:
-                return 'Теги';
-            case self::USERS_TO_REPORT:
-                return 'Пользователи';
-            default:
-                return 'Неизвестно';
-        }
+        return Lang::get('reports.' . $item);
     }
 
     /**
@@ -100,29 +91,5 @@ class PrepareReport
     private function getCount(string $relation): int
     {
         return DB::table($relation)->count('id');
-    }
-
-    /**
-     * Метод для подсчета всего
-     * @return array
-     */
-    private function allCount(): array
-    {
-        $report[] = [
-            'Новости',
-            'Статьи',
-            'Комментарии',
-            'Теги',
-            'Пользователи'
-        ];
-        $report[] = [
-            News::count('id'),
-            Post::count('id'),
-            Comment::count('id'),
-            Tag::count('id'),
-            User::count('id')
-        ];
-
-        return $report;
     }
 }

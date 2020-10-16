@@ -52,12 +52,6 @@ class Reports implements ShouldQueue
         event(
             new ReportRequested(
                 $this->user->id ?? 0,
-
-                // TODO: Подскажите пожалуйста, как правильно обратиться к файлу на диске?
-                // TODO: Закомментированная строка близка к тому, что я хотел получить,
-                // TODO: но она возвращает путь от корня ОС, а не от домена сайта.
-                // TODO: Второй вариант работает, но странно, что приходится писать путь к самому диску
-//                Storage::disk('reports')->path($filename)
                 Storage::url('reports/' . $filename)
             )
         );
