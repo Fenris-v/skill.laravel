@@ -135,7 +135,7 @@ class PostsController extends Controller
 
         flash('Пост успешно изменен', 'success');
 
-        return back();
+        return redirect(route('posts.show', $post->slug));
     }
 
     /**

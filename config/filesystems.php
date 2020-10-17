@@ -48,6 +48,13 @@ return [
             'root' => storage_path('app'),
         ],
 
+        'reports' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/reports'),
+            'url' => env('APP_URL') . '/storage/reports',
+            'visibility' => 'public'
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

@@ -24,6 +24,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        $schedule->command('horizon:snapshot')->everyFiveMinutes();
+
         $schedule->command('cron:mailing')
             ->timezone('Europe/Moscow')
             ->mondays()->at('18:30');

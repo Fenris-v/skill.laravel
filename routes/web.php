@@ -1,10 +1,12 @@
 <?php
 
+use App\Events\ChatMessage;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\Admin\AdminCallbacksController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AdminNewsController;
 use App\Http\Controllers\Admin\AdminPostsController;
+use App\Http\Controllers\Admin\AdminReportsController;
 use App\Http\Controllers\Admin\AdminTagsController;
 use App\Http\Controllers\Admin\AdminUsersController;
 use App\Http\Controllers\CommentController;
@@ -45,8 +47,7 @@ Route::resource('news', NewsController::class)->only(['index', 'show']);
 Auth::routes();
 
 /** Админка */
-Route::group(
-    ['prefix' => '/admin'],
+Route::middleware(['auth', 'admin.panel'])->prefix('/admin')->group(
     function () {
         Route::get('', [AdminController::class, 'index'])->name('admin');
 
@@ -68,5 +69,15 @@ Route::group(
         Route::post('/news', [AdminNewsController::class, 'store'])->name('admin.news.store');
 
         Route::get('/feedbacks', [AdminCallbacksController::class, 'index'])->name('admin.callbacks');
+
+        Route::get('reports', [AdminReportsController::class, 'index'])->name('admin.reports');
+        Route::post('reports', [AdminReportsController::class, 'store'])->name('admin.reports.get');
+
+        Route::get('export', [AdminReportsController::class, 'export']);
     }
 );
+
+/** Чат */
+Route::post('/chat', function () {
+    broadcast(new ChatMessage(request('message'), auth()->user()))->toOthers();
+})->middleware('auth');

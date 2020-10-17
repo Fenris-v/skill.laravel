@@ -14,3 +14,5 @@ yarn-error.log
 /_ide_helper.php
 /.phpstorm.meta.php
 /resources/sass/.sass-cache/
+/storage/framework/
+/laravel-echo-server.lock

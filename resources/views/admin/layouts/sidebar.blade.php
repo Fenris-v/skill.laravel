@@ -32,6 +32,12 @@
                     Заявки
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link {{ url()->current() === route('admin.reports') ? 'active' : '' }}" href="{{ route('admin.reports') }}">
+                    <i class="fas fa-poll"></i>
+                    Отчеты
+                </a>
+            </li>
         </ul>
     </div>
 </nav>

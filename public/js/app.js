@@ -9,85 +9,10 @@
 
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
-/***/ }),
+__webpack_require__(/*! ./vue */ "./resources/js/vue.js");
 
-/***/ "./resources/js/auth-scripts.js":
-/*!**************************************!*\
-  !*** ./resources/js/auth-scripts.js ***!
-  \**************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-document.addEventListener('DOMContentLoaded', function () {
-  /**
-   * Выпадающее меню пользователя
-   */
-  var logout = document.querySelector('#navbarDropdown');
-  var logoutMenu = document.querySelector('.dropdown-menu.dropdown-menu-right');
-
-  if (logout) {
-    logout.addEventListener('click', function (e) {
-      e.preventDefault();
-
-      if (logoutMenu.classList.contains('d-block')) {
-        logoutMenu.classList.remove('d-block');
-      } else {
-        logoutMenu.classList.add('d-block');
-      }
-    });
-  }
-
-  document.addEventListener('click', function (e) {
-    if (logoutMenu !== null && logoutMenu.classList.contains('d-block') && e.target !== logout && !e.target.classList.contains('dropdown-item')) {
-      logoutMenu.classList.remove('d-block');
-    }
-  });
-  /**
-   * Отправка формы разавторизации
-   */
-
-  var logoutSend = document.querySelector('#dropdownLogout');
-
-  if (logoutSend) {
-    logoutSend.addEventListener('click', function (e) {
-      e.preventDefault();
-      document.getElementById('logout-form').submit();
-    });
-  }
-  /**
-   * Подключаем select2
-   */
-
-
-  $('#tagsInput').select2({
-    tags: true
-  });
-  /**
-   * Скрывает, а затем удаляет уведомление
-   */
-
-  var notification = document.querySelector('#notification');
-
-  if (notification) {
-    setTimeout(function () {
-      $(notification).fadeOut();
-      setTimeout(function () {
-        notification.remove();
-      }, 500);
-    }, 3000);
-  }
-  /**
-   * Подключение cke
-   */
-
-
-  if ($('textarea#htmlInput').length > 0) {
-    ClassicEditor.create(document.querySelector('textarea#htmlInput'), {
-      language: 'ru'
-    })["catch"](function (error) {
-      console.error(error);
-    });
-  }
+var app = new Vue({
+  el: '#app'
 });
 
 /***/ }),
@@ -106,6 +31,18 @@ window.select2 = __webpack_require__(/*! select2 */ "./node_modules/select2/dist
 __webpack_require__(/*! ./scripts */ "./resources/js/scripts.js");
 
 __webpack_require__(/*! ./auth-scripts */ "./resources/js/auth-scripts.js");
+
+window.axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+var token = document.head.querySelector('meta[name="csrf-token"]');
+
+if (token) {
+  window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
+} else {
+  console.error('CSRF token not found: https://laravel.com/docs/#csrf-x-csrf-token');
+}
+
+__webpack_require__(/*! ./web-socket */ "./resources/js/web-socket.js");
 
 /***/ }),
 
@@ -132,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 /***/ }),
 
-/***/ 1:
+/***/ 2:
 /*!***********************************!*\
   !*** multi ./resources/js/app.js ***!
   \***********************************/
@@ -144,4 +81,4 @@ module.exports = __webpack_require__(/*! /home/fenris/www/skillbox/skill.laravel
 
 /***/ })
 
-},[[1,"/js/manifest","/js/vendor"]]]);
+},[[2,"/js/manifest","/js/vendor"]]]);

@@ -6,12 +6,15 @@ use App\Events\PostEdited;
 use App\Models\Group;
 use App\Models\User;
 use App\Traits\UserCollectionForMailing;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Notification;
 
-class SendPostEditedNotification
+class SendPostEditedNotification implements ShouldQueue
 {
     use UserCollectionForMailing;
+
+    public string $queue = 'notifications';
 
     /**
      * Уведомляет админов и автора о создании нового поста
