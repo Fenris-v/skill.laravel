@@ -52,7 +52,8 @@ class Reports implements ShouldQueue
         event(
             new ReportRequested(
                 $this->user->id ?? 0,
-                Storage::url('reports/' . $filename)
+//                Storage::url('reports/' . $filename)
+                Storage::disk('reports')->url($filename)
             )
         );
 
