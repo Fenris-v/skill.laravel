@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\ClearCache;
 use App\Traits\HasComments;
 use App\Traits\HasTag;
 use App\Traits\SyncTags;
@@ -19,8 +20,34 @@ class News extends Model
     use HasTag;
     use HasComments;
     use SyncTags;
+    use ClearCache;
 
     protected $fillable = ['title', 'slug', 'short_desc', 'text'];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(
+            function ($news) {
+                $news->clearNewsTags();
+            }
+        );
+
+        static::updated(
+            function ($news) {
+                $news->clearNewsTags();
+                $news->clearComments('news', $news->id);
+            }
+        );
+
+        static::deleted(
+            function ($news) {
+                $news->clearNewsTags();
+                $news->clearComments('news', $news->id);
+            }
+        );
+    }
 
     /**
      * @return string

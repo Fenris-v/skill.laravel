@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\News;
+use Cache;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\Request;
@@ -14,11 +15,20 @@ class NewsController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param Request $request
      * @return Application|Factory|Response|View
      */
-    public function index()
+    public function index(Request $request)
     {
-        $items = News::latest()->with('tags')->paginate(5);
+        $page = request()->has('page') ? (int)$request->query('page') : 1;
+
+        $items = Cache::tags(['blog', 'news'])->remember(
+            'news_page_' . $page,
+            3600,
+            function () {
+                return News::latest()->with('tags')->paginate(5);
+            }
+        );
 
         return view('main.index', compact('items'));
     }
@@ -31,7 +41,13 @@ class NewsController extends Controller
      */
     public function show(News $news)
     {
-        $comments = $news->comments()->with('user')->latest()->get();
+        $comments = Cache::tags(['blog', 'comments', 'comments_news_' . $news->id])->remember(
+            'comments_news_' . $news->id,
+            3600,
+            function () use ($news) {
+                return $news->comments()->with('user')->latest()->get();
+            }
+        );
 
         return view('news.show', compact('news', 'comments'));
     }

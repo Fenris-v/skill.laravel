@@ -7,6 +7,7 @@ use App\Events\PostEdited;
 use App\Events\PostPublished;
 use App\Events\PostRemoved;
 use App\Events\PostUnpublished;
+use App\Traits\ClearCache;
 use App\Traits\HasComments;
 use App\Traits\HasTag;
 use App\Traits\SyncTags;
@@ -28,6 +29,7 @@ class Post extends Model
     use HasTag;
     use HasComments;
     use SyncTags;
+    use ClearCache;
 
     /** События */
     protected $dispatchesEvents = [
@@ -52,9 +54,18 @@ class Post extends Model
     {
         parent::boot();
 
+        static::created(
+            function ($post) {
+                $post->clearPostsTags();
+            }
+        );
+
         /** Собственная логика на событие 'updated' */
         static::updated(
             function ($post) {
+                $post->clearPostsTags();
+                $post->clearComments('posts', $post->id);
+
                 $updatedFields = collect($post->getDirty())->forget('updated_at');
 
                 if ($updatedFields->count() > 1 || !$updatedFields->keys()->contains('published')) {
@@ -79,6 +90,11 @@ class Post extends Model
                 );
             }
         );
+
+        static::deleted(function ($post) {
+            $post->clearPostsTags();
+            $post->clearComments('posts', $post->id);
+        });
     }
 
     /**

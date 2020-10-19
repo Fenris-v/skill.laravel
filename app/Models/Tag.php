@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\ClearCache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Sluggable\HasSlug;
@@ -11,8 +12,32 @@ class Tag extends Model
 {
     use HasFactory;
     use HasSlug;
+    use ClearCache;
 
     protected $fillable = ['name', 'slug'];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(
+            function () {
+                $this->clearPostsNewsTags();
+            }
+        );
+
+        static::updated(
+            function () {
+                $this->clearPostsNewsTags();
+            }
+        );
+
+        static::deleted(
+            function () {
+                $this->clearPostsNewsTags();
+            }
+        );
+    }
 
     /**
      * Переопределяем по какому значению будет поиск по БД для маршрута
