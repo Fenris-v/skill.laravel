@@ -17,9 +17,9 @@ class TagsController extends Controller
      */
     public function index(Tag $tag)
     {
-        $relations = Cache::tags(['blog', 'tags'])->remember(
+        $relations = Cache::tags(['tags', 'news', 'posts'])->remember(
             'tag_' . $tag->id,
-            3600,
+            3600 * 24,
             function () use ($tag) {
                 return $tag->load(
                     [

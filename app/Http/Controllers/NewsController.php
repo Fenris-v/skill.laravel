@@ -22,9 +22,9 @@ class NewsController extends Controller
     {
         $page = request()->has('page') ? (int)$request->query('page') : 1;
 
-        $items = Cache::tags(['blog', 'news'])->remember(
+        $items = Cache::tags(['news'])->remember(
             'news_page_' . $page,
-            3600,
+            3600 * 24,
             function () {
                 return News::latest()->with('tags')->paginate(5);
             }
@@ -36,14 +36,22 @@ class NewsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param News $news
+     * @param string $slug
      * @return Application|Factory|Response|View
      */
-    public function show(News $news)
+    public function show(string $slug)
     {
-        $comments = Cache::tags(['blog', 'comments', 'comments_news_' . $news->id])->remember(
+        $news = Cache::tags(['news', 'news_' . $slug])->remember(
+            'news_' . $slug,
+            3600 * 24,
+            function () use ($slug) {
+                return News::where('slug', $slug)->first();
+            }
+        );
+
+        $comments = Cache::tags(['comments', 'comments_news_' . $news->id])->remember(
             'comments_news_' . $news->id,
-            3600,
+            3600 * 24,
             function () use ($news) {
                 return $news->comments()->with('user')->latest()->get();
             }

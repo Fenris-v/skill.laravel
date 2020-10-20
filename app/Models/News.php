@@ -2,7 +2,8 @@
 
 namespace App\Models;
 
-use App\Traits\ClearCache;
+use App\Events\ClearCacheEvent;
+use App\Interfaces\Cache;
 use App\Traits\HasComments;
 use App\Traits\HasTag;
 use App\Traits\SyncTags;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-class News extends Model
+class News extends Model implements Cache
 {
     use HasFactory;
     use HasSlug;
@@ -20,34 +21,15 @@ class News extends Model
     use HasTag;
     use HasComments;
     use SyncTags;
-    use ClearCache;
 
     protected $fillable = ['title', 'slug', 'short_desc', 'text'];
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::created(
-            function ($news) {
-                $news->clearNewsTags();
-            }
-        );
-
-        static::updated(
-            function ($news) {
-                $news->clearNewsTags();
-                $news->clearComments('news', $news->id);
-            }
-        );
-
-        static::deleted(
-            function ($news) {
-                $news->clearNewsTags();
-                $news->clearComments('news', $news->id);
-            }
-        );
-    }
+    /** События */
+    protected $dispatchesEvents = [
+        'created' => ClearCacheEvent::class,
+        'updated' => ClearCacheEvent::class,
+        'deleted' => ClearCacheEvent::class
+    ];
 
     /**
      * @return string
@@ -67,5 +49,13 @@ class News extends Model
             ->generateSlugsFrom('title')
             ->saveSlugsTo('slug')
             ->doNotGenerateSlugsOnUpdate();
+    }
+
+    /**
+     * @return array
+     */
+    public function getTags(): array
+    {
+        return ['news', 'tags', 'comments_news_' . $this->id];
     }
 }

@@ -2,41 +2,30 @@
 
 namespace App\Models;
 
-use App\Traits\ClearCache;
+use App\Events\ClearCacheEvent;
+use App\Interfaces\Cache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-class Tag extends Model
+class Tag extends Model implements Cache
 {
     use HasFactory;
     use HasSlug;
-    use ClearCache;
 
     protected $fillable = ['name', 'slug'];
 
-    protected static function boot()
+    /** События */
+    protected $dispatchesEvents = [
+        'created' => ClearCacheEvent::class,
+        'updated' => ClearCacheEvent::class,
+        'deleted' => ClearCacheEvent::class
+    ];
+
+    public function getTags(): array
     {
-        parent::boot();
-
-        static::created(
-            function () {
-                $this->clearPostsNewsTags();
-            }
-        );
-
-        static::updated(
-            function () {
-                $this->clearPostsNewsTags();
-            }
-        );
-
-        static::deleted(
-            function () {
-                $this->clearPostsNewsTags();
-            }
-        );
+        return ['tags'];
     }
 
     /**

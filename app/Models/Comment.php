@@ -2,42 +2,25 @@
 
 namespace App\Models;
 
-use App\Traits\ClearCache;
-use Cache;
+use App\Events\ClearCacheEvent;
+use App\Interfaces\Cache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class Comment extends Model
+class Comment extends Model implements Cache
 {
     use HasFactory;
-    use ClearCache;
 
     protected $fillable = ['text', 'user_id'];
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::created(
-            function () {
-                Cache::tags(['blog', 'comments'])->flush();
-            }
-        );
-
-        static::updated(
-            function () {
-                Cache::tags(['blog', 'comments'])->flush();
-            }
-        );
-
-        static::deleted(
-            function () {
-                Cache::tags(['blog', 'comments'])->flush();
-            }
-        );
-    }
+    /** События */
+    protected $dispatchesEvents = [
+        'created' => ClearCacheEvent::class,
+        'updated' => ClearCacheEvent::class,
+        'deleted' => ClearCacheEvent::class
+    ];
 
     /**
      * Привязка к другим моделям
@@ -55,5 +38,10 @@ class Comment extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function getTags(): array
+    {
+        return ['comments'];
     }
 }

@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Events\ClearCacheEvent;
 use App\Events\PostCreated;
 use App\Events\PostEdited;
 use App\Events\PostPublished;
 use App\Events\PostRemoved;
 use App\Events\PostUnpublished;
-use App\Traits\ClearCache;
+use App\Interfaces\Cache;
 use App\Traits\HasComments;
 use App\Traits\HasTag;
 use App\Traits\SyncTags;
@@ -21,7 +22,7 @@ use Illuminate\Support\Arr;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-class Post extends Model
+class Post extends Model implements Cache
 {
     use HasFactory;
     use HasSlug;
@@ -29,7 +30,6 @@ class Post extends Model
     use HasTag;
     use HasComments;
     use SyncTags;
-    use ClearCache;
 
     /** События */
     protected $dispatchesEvents = [
@@ -56,15 +56,14 @@ class Post extends Model
 
         static::created(
             function ($post) {
-                $post->clearPostsTags();
+                event(new ClearCacheEvent($post));
             }
         );
 
         /** Собственная логика на событие 'updated' */
         static::updated(
             function ($post) {
-                $post->clearPostsTags();
-                $post->clearComments('posts', $post->id);
+                event(new ClearCacheEvent($post));
 
                 $updatedFields = collect($post->getDirty())->forget('updated_at');
 
@@ -91,10 +90,20 @@ class Post extends Model
             }
         );
 
-        static::deleted(function ($post) {
-            $post->clearPostsTags();
-            $post->clearComments('posts', $post->id);
-        });
+        static::deleted(
+            function ($post) {
+                event(new ClearCacheEvent($post));
+            }
+        );
+    }
+
+    /**
+     * Возвращает теги для кэша
+     * @return array
+     */
+    public function getTags(): array
+    {
+        return ['posts', 'tags', 'comments_posts_' . $this->id];
     }
 
     /**

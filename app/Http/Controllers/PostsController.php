@@ -36,9 +36,9 @@ class PostsController extends Controller
     {
         $page = request()->has('page') ? (int)$request->query('page') : 1;
 
-        $items = Cache::tags(['blog', 'posts'])->remember(
+        $items = Cache::tags(['posts'])->remember(
             'posts_page_' . $page,
-            3600,
+            3600 * 24,
             function () {
                 return Post::publishedPosts()
                     ->with('tags')
@@ -54,17 +54,25 @@ class PostsController extends Controller
     /**
      * Возвращает отображение детальной страницы статьи
      * Передает коллекцию конкретной статьи
-     * @param Post $post
+     * @param string $slug
      * @return Application|Factory|View
      * @throws AuthorizationException
      */
-    public function show(Post $post)
+    public function show(string $slug)
     {
+        $post = Cache::tags(['posts', 'post_' . $slug])->remember(
+            'post_' . $slug,
+            3600 * 24,
+            function () use ($slug) {
+                return Post::where('slug', $slug)->first();
+            }
+        );
+
         $this->authorize('showPost', $post);
 
-        $comments = Cache::tags(['blog', 'comments', 'comments_' . $post->id])->remember(
+        $comments = Cache::tags(['comments', 'comments_' . $post->id])->remember(
             'comments_posts_' . $post->id,
-            3600,
+            3600 * 24,
             function () use ($post) {
                 return $post->comments()->with('user')->latest()->get();
             }

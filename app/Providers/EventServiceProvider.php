@@ -7,7 +7,6 @@ use App\Events\PostEdited;
 use App\Events\PostPublished;
 use App\Events\PostRemoved;
 use App\Events\PostUnpublished;
-use App\Events\ReportRequested;
 use App\Listeners\SendPostCreatedNotification;
 use App\Listeners\SendPostEditedNotification;
 use App\Listeners\SendPostPublishedNotification;
@@ -43,9 +42,6 @@ class EventServiceProvider extends ServiceProvider
         PostRemoved::class => [
             SendPostRemovedNotification::class
         ],
-        ReportRequested::class => [
-
-        ]
     ];
 
     /**
