@@ -24,6 +24,7 @@ class CommentForm extends FormRequest
     public function rules()
     {
         return [
+            'title' => 'required|min:5|max:150',
             'text' => 'required|min:5|max:500',
         ];
     }

@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Events\ClearCacheEvent;
 use App\Interfaces\Cache;
+use App\Traits\ClearCache;
 use App\Traits\HasComments;
 use App\Traits\HasTag;
 use App\Traits\SyncTags;
@@ -21,15 +21,9 @@ class News extends Model implements Cache
     use HasTag;
     use HasComments;
     use SyncTags;
+    use ClearCache;
 
     protected $fillable = ['title', 'slug', 'short_desc', 'text'];
-
-    /** События */
-    protected $dispatchesEvents = [
-        'created' => ClearCacheEvent::class,
-        'updated' => ClearCacheEvent::class,
-        'deleted' => ClearCacheEvent::class
-    ];
 
     /**
      * @return string
@@ -52,6 +46,7 @@ class News extends Model implements Cache
     }
 
     /**
+     * Возвращает теги для кэша
      * @return array
      */
     public function getTags(): array

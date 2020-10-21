@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use App\Events\ClearCacheEvent;
 use App\Events\PostCreated;
 use App\Events\PostEdited;
 use App\Events\PostPublished;
 use App\Events\PostRemoved;
 use App\Events\PostUnpublished;
 use App\Interfaces\Cache;
+use App\Traits\ClearCache;
 use App\Traits\HasComments;
 use App\Traits\HasTag;
 use App\Traits\SyncTags;
@@ -30,6 +30,7 @@ class Post extends Model implements Cache
     use HasTag;
     use HasComments;
     use SyncTags;
+    use ClearCache;
 
     /** События */
     protected $dispatchesEvents = [
@@ -54,17 +55,9 @@ class Post extends Model implements Cache
     {
         parent::boot();
 
-        static::created(
-            function ($post) {
-                event(new ClearCacheEvent($post));
-            }
-        );
-
         /** Собственная логика на событие 'updated' */
         static::updated(
             function ($post) {
-                event(new ClearCacheEvent($post));
-
                 $updatedFields = collect($post->getDirty())->forget('updated_at');
 
                 if ($updatedFields->count() > 1 || !$updatedFields->keys()->contains('published')) {
@@ -87,12 +80,6 @@ class Post extends Model implements Cache
                         'after' => $after
                     ]
                 );
-            }
-        );
-
-        static::deleted(
-            function ($post) {
-                event(new ClearCacheEvent($post));
             }
         );
     }

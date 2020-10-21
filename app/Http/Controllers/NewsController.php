@@ -36,19 +36,11 @@ class NewsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param string $slug
+     * @param News $news
      * @return Application|Factory|Response|View
      */
-    public function show(string $slug)
+    public function show(News $news)
     {
-        $news = Cache::tags(['news', 'news_' . $slug])->remember(
-            'news_' . $slug,
-            3600 * 24,
-            function () use ($slug) {
-                return News::where('slug', $slug)->first();
-            }
-        );
-
         $comments = Cache::tags(['comments', 'comments_news_' . $news->id])->remember(
             'comments_news_' . $news->id,
             3600 * 24,

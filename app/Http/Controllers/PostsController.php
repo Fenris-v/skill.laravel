@@ -54,20 +54,12 @@ class PostsController extends Controller
     /**
      * Возвращает отображение детальной страницы статьи
      * Передает коллекцию конкретной статьи
-     * @param string $slug
+     * @param Post $post
      * @return Application|Factory|View
      * @throws AuthorizationException
      */
-    public function show(string $slug)
+    public function show(Post $post)
     {
-        $post = Cache::tags(['posts', 'post_' . $slug])->remember(
-            'post_' . $slug,
-            3600 * 24,
-            function () use ($slug) {
-                return Post::where('slug', $slug)->first();
-            }
-        );
-
         $this->authorize('showPost', $post);
 
         $comments = Cache::tags(['comments', 'comments_' . $post->id])->remember(

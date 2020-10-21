@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Events\ClearCacheEvent;
 use App\Interfaces\Cache;
+use App\Traits\ClearCache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Sluggable\HasSlug;
@@ -13,16 +13,14 @@ class Tag extends Model implements Cache
 {
     use HasFactory;
     use HasSlug;
+    use ClearCache;
 
     protected $fillable = ['name', 'slug'];
 
-    /** События */
-    protected $dispatchesEvents = [
-        'created' => ClearCacheEvent::class,
-        'updated' => ClearCacheEvent::class,
-        'deleted' => ClearCacheEvent::class
-    ];
-
+    /**
+     * Возвращает теги для кэша
+     * @return array
+     */
     public function getTags(): array
     {
         return ['tags'];

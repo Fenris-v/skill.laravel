@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Events\ClearCacheEvent;
 use App\Interfaces\Cache;
+use App\Traits\ClearCache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,15 +12,9 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class Comment extends Model implements Cache
 {
     use HasFactory;
+    use ClearCache;
 
     protected $fillable = ['text', 'user_id'];
-
-    /** События */
-    protected $dispatchesEvents = [
-        'created' => ClearCacheEvent::class,
-        'updated' => ClearCacheEvent::class,
-        'deleted' => ClearCacheEvent::class
-    ];
 
     /**
      * Привязка к другим моделям
@@ -40,6 +34,10 @@ class Comment extends Model implements Cache
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * Возвращает теги для кэша
+     * @return array
+     */
     public function getTags(): array
     {
         return ['comments'];

@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\News;
+use App\Models\Post;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 
 class RouteServiceProvider extends ServiceProvider
@@ -30,9 +33,21 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
-
         parent::boot();
+
+        Route::bind(
+            'news',
+            function ($slug) {
+                return $this->getModel($slug, 'news');
+            }
+        );
+
+        Route::bind(
+            'post',
+            function ($slug) {
+                return $this->getModel($slug, 'posts');
+            }
+        );
     }
 
     /**
@@ -45,7 +60,6 @@ class RouteServiceProvider extends ServiceProvider
         $this->mapApiRoutes();
 
         $this->mapWebRoutes();
-
         //
     }
 
@@ -76,5 +90,29 @@ class RouteServiceProvider extends ServiceProvider
             ->middleware('api')
             ->namespace($this->namespace)
             ->group(base_path('routes/api.php'));
+    }
+
+    /**
+     * Возвращает коллекцию модели из кэша
+     * @param string $slug
+     * @param string $model
+     * @return array|mixed
+     */
+    private function getModel(string $slug, string $model)
+    {
+        return Cache::tags([$model, $model . '_' . $slug])->remember(
+            $model . '_' . $slug,
+            3600 * 24,
+            function () use ($slug, $model) {
+                // TODO: Я хотел написать DB::table($model)->...
+                // TODO: Но получал ошибку PDO, поэтому решил цикл написать, но теперь это выглядит не очень хорошо
+                switch ($model) {
+                    case 'news':
+                        return News::where('slug', $slug)->first();
+                    case 'posts':
+                        return Post::where('slug', $slug)->first();
+                }
+            }
+        );
     }
 }
