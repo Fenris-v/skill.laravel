@@ -14,20 +14,25 @@ trait ClearCache
     {
         static::created(
             function ($item) {
-                Cache::tags($item->getTags())->flush();
+                $item->cacheFlush($item);
             }
         );
 
         static::updated(
             function ($item) {
-                Cache::tags($item->getTags())->flush();
+                $item->cacheFlush($item);
             }
         );
 
         static::deleted(
             function ($item) {
-                Cache::tags($item->getTags())->flush();
+                $item->cacheFlush($item);
             }
         );
+    }
+
+    private function cacheFlush($item): void
+    {
+        Cache::tags($item->getTags())->flush();
     }
 }

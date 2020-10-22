@@ -38,14 +38,26 @@ class RouteServiceProvider extends ServiceProvider
         Route::bind(
             'news',
             function ($slug) {
-                return $this->getModel($slug, 'news');
+                return Cache::tags(['news', 'news_' . $slug])->remember(
+                    'news_' . $slug,
+                    3600 * 24,
+                    function () use ($slug) {
+                        return News::where('slug', $slug)->first();
+                    }
+                );
             }
         );
 
         Route::bind(
             'post',
             function ($slug) {
-                return $this->getModel($slug, 'posts');
+                return Cache::tags(['posts', 'posts_' . $slug])->remember(
+                    'posts_' . $slug,
+                    3600 * 24,
+                    function () use ($slug) {
+                        return Post::where('slug', $slug)->first();
+                    }
+                );
             }
         );
     }
@@ -90,29 +102,5 @@ class RouteServiceProvider extends ServiceProvider
             ->middleware('api')
             ->namespace($this->namespace)
             ->group(base_path('routes/api.php'));
-    }
-
-    /**
-     * Возвращает коллекцию модели из кэша
-     * @param string $slug
-     * @param string $model
-     * @return array|mixed
-     */
-    private function getModel(string $slug, string $model)
-    {
-        return Cache::tags([$model, $model . '_' . $slug])->remember(
-            $model . '_' . $slug,
-            3600 * 24,
-            function () use ($slug, $model) {
-                // TODO: Я хотел написать DB::table($model)->...
-                // TODO: Но получал ошибку PDO, поэтому решил цикл написать, но теперь это выглядит не очень хорошо
-                switch ($model) {
-                    case 'news':
-                        return News::where('slug', $slug)->first();
-                    case 'posts':
-                        return Post::where('slug', $slug)->first();
-                }
-            }
-        );
     }
 }
