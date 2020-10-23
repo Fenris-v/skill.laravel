@@ -2,17 +2,29 @@
 
 namespace App\Models;
 
+use App\Interfaces\Cache;
+use App\Traits\ClearCache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-class Tag extends Model
+class Tag extends Model implements Cache
 {
     use HasFactory;
     use HasSlug;
+    use ClearCache;
 
     protected $fillable = ['name', 'slug'];
+
+    /**
+     * Возвращает теги для кэша
+     * @return array
+     */
+    public function getTags(): array
+    {
+        return ['tags'];
+    }
 
     /**
      * Переопределяем по какому значению будет поиск по БД для маршрута

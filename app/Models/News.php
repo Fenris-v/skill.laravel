@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Interfaces\Cache;
+use App\Traits\ClearCache;
 use App\Traits\HasComments;
 use App\Traits\HasTag;
 use App\Traits\SyncTags;
@@ -11,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-class News extends Model
+class News extends Model implements Cache
 {
     use HasFactory;
     use HasSlug;
@@ -19,6 +21,7 @@ class News extends Model
     use HasTag;
     use HasComments;
     use SyncTags;
+    use ClearCache;
 
     protected $fillable = ['title', 'slug', 'short_desc', 'text'];
 
@@ -40,5 +43,14 @@ class News extends Model
             ->generateSlugsFrom('title')
             ->saveSlugsTo('slug')
             ->doNotGenerateSlugsOnUpdate();
+    }
+
+    /**
+     * Возвращает теги для кэша
+     * @return array
+     */
+    public function getTags(): array
+    {
+        return ['news', 'tags', 'comments_news_' . $this->id];
     }
 }

@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PostForm;
 use App\Models\Post;
+use Cache;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
 use Illuminate\View\View;
 
@@ -27,15 +29,24 @@ class PostsController extends Controller
     /**
      * Возвращает отображение главной страницы
      * Передает в нее выборку статей
+     * @param Request $request
      * @return Application|Factory|View
      */
-    public function index()
+    public function index(Request $request)
     {
-        $items = Post::publishedPosts()
-            ->with('tags')
-            ->with('user')
-            ->latest()
-            ->paginate(5);
+        $page = request()->has('page') ? (int)$request->query('page') : 1;
+
+        $items = Cache::tags(['posts'])->remember(
+            'posts_page_' . $page,
+            3600 * 24,
+            function () {
+                return Post::publishedPosts()
+                    ->with('tags')
+                    ->with('user')
+                    ->latest()
+                    ->paginate(5);
+            }
+        );
 
         return view('main.index', compact('items'));
     }
@@ -51,7 +62,13 @@ class PostsController extends Controller
     {
         $this->authorize('showPost', $post);
 
-        $comments = $post->comments()->with('user')->latest()->get();
+        $comments = Cache::tags(['comments', 'comments_' . $post->id])->remember(
+            'comments_posts_' . $post->id,
+            3600 * 24,
+            function () use ($post) {
+                return $post->comments()->with('user')->latest()->get();
+            }
+        );
 
         return view('posts.show', compact('post', 'comments'));
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tag;
+use Cache;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\View\View;
@@ -16,16 +17,23 @@ class TagsController extends Controller
      */
     public function index(Tag $tag)
     {
-        $relations = $tag->load(
-            [
-                'news' => function ($query) {
-                    $query->with('tags');
-                },
-                'posts' => function ($query) {
-                    $query->with('tags', 'user');
-                }
-            ]
-        )->getRelations();
+        $relations = Cache::tags(['tags', 'news', 'posts'])->remember(
+            'tag_' . $tag->id,
+            3600 * 24,
+            function () use ($tag) {
+                return $tag->load(
+                    [
+                        'news' => function ($query) {
+                            $query->with('tags');
+                        },
+                        'posts' => function ($query) {
+                            $query->with('tags', 'user')->publishedPosts();
+                        }
+                    ]
+                )->getRelations();
+            }
+        );
+
 
         $items = collect();
         foreach ($relations as $relation) {

@@ -2,14 +2,17 @@
 
 namespace App\Models;
 
+use App\Interfaces\Cache;
+use App\Traits\ClearCache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class Comment extends Model
+class Comment extends Model implements Cache
 {
     use HasFactory;
+    use ClearCache;
 
     protected $fillable = ['text', 'user_id'];
 
@@ -29,5 +32,14 @@ class Comment extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Возвращает теги для кэша
+     * @return array
+     */
+    public function getTags(): array
+    {
+        return ['comments'];
     }
 }

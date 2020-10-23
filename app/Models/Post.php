@@ -7,6 +7,8 @@ use App\Events\PostEdited;
 use App\Events\PostPublished;
 use App\Events\PostRemoved;
 use App\Events\PostUnpublished;
+use App\Interfaces\Cache;
+use App\Traits\ClearCache;
 use App\Traits\HasComments;
 use App\Traits\HasTag;
 use App\Traits\SyncTags;
@@ -20,7 +22,7 @@ use Illuminate\Support\Arr;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-class Post extends Model
+class Post extends Model implements Cache
 {
     use HasFactory;
     use HasSlug;
@@ -28,6 +30,7 @@ class Post extends Model
     use HasTag;
     use HasComments;
     use SyncTags;
+    use ClearCache;
 
     /** События */
     protected $dispatchesEvents = [
@@ -79,6 +82,15 @@ class Post extends Model
                 );
             }
         );
+    }
+
+    /**
+     * Возвращает теги для кэша
+     * @return array
+     */
+    public function getTags(): array
+    {
+        return ['posts', 'tags', 'comments_posts_' . $this->id];
     }
 
     /**

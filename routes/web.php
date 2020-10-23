@@ -23,7 +23,6 @@ Route::get('/tags/{tag}', [TagsController::class, 'index'])->name('posts.tag');
 Route::get('/posts/users/{user}', [UsersController::class, 'index'])->name('posts.by.user');
 Route::get('/posts/unpublished', [PostsController::class, 'showUnpublished'])->name('posts.unpublished');
 
-
 Route::get('/', [PostsController::class, 'index'])->name('posts.index');
 Route::resource('posts', PostsController::class)->except(['index']);
 Route::post('/posts/{post}/publishing', [PublishedPostsController::class, 'store'])->name('posts.publishing');
