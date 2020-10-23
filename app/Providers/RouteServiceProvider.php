@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Models\News;
 use App\Models\Post;
+use Closure;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
@@ -38,11 +38,11 @@ class RouteServiceProvider extends ServiceProvider
         Route::bind(
             'news',
             function ($slug) {
-                return Cache::tags(['news', 'news_' . $slug])->remember(
+                return $this->cacheModel(
+                    ['news', 'news_' . $slug],
                     'news_' . $slug,
-                    3600 * 24,
                     function () use ($slug) {
-                        return News::where('slug', $slug)->first();
+                        return Post::where('slug', $slug)->first();
                     }
                 );
             }
@@ -51,9 +51,9 @@ class RouteServiceProvider extends ServiceProvider
         Route::bind(
             'post',
             function ($slug) {
-                return Cache::tags(['posts', 'posts_' . $slug])->remember(
+                return $this->cacheModel(
+                    ['posts', 'posts_' . $slug],
                     'posts_' . $slug,
-                    3600 * 24,
                     function () use ($slug) {
                         return Post::where('slug', $slug)->first();
                     }
@@ -102,5 +102,17 @@ class RouteServiceProvider extends ServiceProvider
             ->middleware('api')
             ->namespace($this->namespace)
             ->group(base_path('routes/api.php'));
+    }
+
+    /**
+     * @param $tags
+     * @param $id
+     * @param Closure $callback
+     * @param int $time
+     * @return array|mixed
+     */
+    protected function cacheModel($tags, $id, Closure $callback, $time = 86400)
+    {
+        return Cache::tags($tags)->remember($id, $time, $callback);
     }
 }
